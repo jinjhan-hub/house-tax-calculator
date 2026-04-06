@@ -381,10 +381,13 @@
     @media print {
       @page {
         size: A4;
-        margin: 14mm;
+        margin: 10mm;
+      }
+      html, body {
+        background: #fff !important;
       }
       body {
-        background: #fff !important;
+        zoom: 0.92;
       }
       .wrap {
         max-width: none;
@@ -396,6 +399,7 @@
       }
       .grid {
         grid-template-columns: 1fr !important;
+        gap: 0 !important;
       }
       .card {
         border: 0;
@@ -403,40 +407,90 @@
         padding: 0;
         position: relative;
         overflow: hidden;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
       .print-only-header {
         display: block;
-        margin-bottom: 18px;
-        padding-bottom: 12px;
+        margin-bottom: 10px;
+        padding-bottom: 8px;
         border-bottom: 2px solid #e5e7eb;
       }
       .print-only-header h2 {
-        margin: 0 0 6px;
-        font-size: 24px;
+        margin: 0 0 4px;
+        font-size: 20px;
       }
       .print-only-header .meta {
-        font-size: 13px;
+        font-size: 11px;
         color: #4b5563;
-        line-height: 1.7;
+        line-height: 1.5;
       }
       .result-head {
-        margin-top: 12px;
+        margin-top: 8px;
+        margin-bottom: 8px;
+      }
+      .section-title {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      .hint {
+        font-size: 11px;
+      }
+      .pill {
+        padding: 6px 10px;
+        font-size: 12px;
+      }
+      .big {
+        font-size: 30px;
+        margin: 6px 0;
+      }
+      .result-message-strong {
+        margin-top: 6px;
+        padding: 8px 10px;
+        font-size: 16px;
+        line-height: 1.4;
+      }
+      .stats {
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .stat {
+        padding: 10px;
+      }
+      .stat .k {
+        font-size: 11px;
+        margin-bottom: 4px;
+      }
+      .stat .v {
+        font-size: 18px;
+      }
+      .detail {
+        margin-top: 10px;
+        padding-top: 10px;
+      }
+      .detail-row {
+        padding: 6px 0;
+        font-size: 12px;
       }
       .note {
+        margin-top: 10px;
+        padding: 10px;
+        font-size: 11px;
+        line-height: 1.55;
         background: #fffaf0;
       }
       .card.print-watermark::before {
         content: "太平洋房屋員林站前店";
         position: absolute;
-        top: 45%;
+        top: 48%;
         left: 50%;
         transform: translate(-50%, -50%) rotate(-24deg);
-        font-size: 54px;
+        font-size: 46px;
         font-weight: 900;
-        color: rgba(15, 23, 42, 0.08);
-        letter-spacing: 6px;
+        color: rgba(15, 23, 42, 0.10);
+        letter-spacing: 5px;
         white-space: nowrap;
-        z-index: 0;
+        z-index: 99;
         pointer-events: none;
       }
       .card.print-watermark > * {
@@ -593,6 +647,7 @@
           <div>
             <div class="section-title">試算結果</div>
             <div id="holdingText" class="hint">請先輸入資料後按「開始試算」。</div>
+            <div id="holdingDateText" class="hint">購入日期：--　｜　售出日期：--</div>
           </div>
           <div class="pill" id="ratePill">稅率 --</div>
         </div>
@@ -650,6 +705,15 @@
           <button type="button" class="icon-btn ghost-btn remove-cost">刪除</button>
         </div>
       `;
+    }
+
+    function toRocDisplay(input) {
+      const date = parseRocDate(input);
+      if (!date || Number.isNaN(date.getTime())) return '--';
+      const rocYear = date.getFullYear() - 1911;
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${rocYear}/${month}/${day}`;
     }
 
     function formatMoney(n) {
@@ -903,6 +967,7 @@
       const statusClass = taxableIncome <= 0 ? 'ok' : (taxAmount > 0 ? 'bad' : 'warn');
 
       $('holdingText').textContent = `持有期間：約 ${holding.years} 年 ${holding.days} 天（約 ${holding.totalDays.toLocaleString('zh-TW')} 天）`;
+      $('holdingDateText').textContent = `購入日期：${toRocDisplay(buyDateStr)}　｜　售出日期：${toRocDisplay(sellDateStr)}`;
       $('ratePill').textContent = `稅率 ${rateResult.rate}%`;
       $('taxAmount').textContent = formatMoney(taxAmount);
       $('taxAmount').className = `big ${statusClass}`;
@@ -960,6 +1025,7 @@
       $('residentType').value = 'resident';
       $('selfUse').checked = false;
       $('holdingText').textContent = '請先輸入資料後按「開始試算」。';
+      $('holdingDateText').textContent = '購入日期：--　｜　售出日期：--';
       $('preRateValue').textContent = '請先填入購入時間與出售時間';
       $('preRateNote').textContent = '提醒：持有期間原則上應以建物或土地謄本的登記時間為準。';
       $('legacyAlert').style.display = 'none';
