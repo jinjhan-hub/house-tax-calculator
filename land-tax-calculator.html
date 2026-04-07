@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+<!-- GitHub Pages ready: upload this file as index.html -->
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>台灣土地增值稅試算</title>
+  <title>太平洋房屋站前店土地增值稅試算</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -215,12 +216,12 @@
       justify-content: center;
       pointer-events: none;
       overflow: hidden;
-      z-index: 0;
+      z-index: 50;
     }
     .watermark span {
       font-size: 56px;
       font-weight: 800;
-      color: rgba(15, 23, 42, 0.06);
+      color: rgba(15, 23, 42, 0.035);
       transform: rotate(-24deg);
       white-space: nowrap;
       user-select: none;
@@ -228,6 +229,17 @@
     .print-surface {
       position: relative;
       z-index: 1;
+    }
+
+    .sales-print-info {
+      display: none;
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
     }
     .print-title {
       display: none;
@@ -287,7 +299,18 @@
       .print-subtitle {
         display: block;
       }
-      .print-title {
+  
+    .sales-print-info {
+      display: none;
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .print-title {
         font-size: 18px;
         margin: 0 0 6px;
       }
@@ -376,9 +399,16 @@
         font-size: 10px;
         line-height: 1.45;
       }
+      .watermark {
+        z-index: 9999 !important;
+      }
       .watermark span {
         font-size: 60px;
-        color: rgba(15, 23, 42, 0.07);
+        color: rgba(15, 23, 42, 0.03) !important;
+      }
+      .print-surface {
+        position: relative;
+        z-index: 1;
       }
     }
 
@@ -386,9 +416,9 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>台灣土地增值稅試算</h1>
+    <h1>太平洋房屋站前店土地增值稅試算</h1>
     <p class="subtitle">
-      可輸入土地類型、面積、公告現值、前次移轉、前次移轉年月、移轉或設典範圍，並由官方物價指數下拉選單自動帶入稅務專用物價指數。
+      可輸入土地類型、面積、公告現值、前次移轉、前次移轉年月、移轉或設典範圍，並由官方物價指數下拉選單自動帶入稅務專用物價指數。巫建穎製作
     </p>
 
     <div class="layout">
@@ -464,6 +494,10 @@
           <div class="print-surface">
           <div class="print-title">土地增值稅試算結果</div>
           <div class="print-subtitle">太平洋房屋員林站前店</div>
+          <div class="sales-print-info" id="salesPrintInfo">
+            <div>業務姓名：<span id="printSalesName">--</span></div>
+            <div>業務手機：<span id="printSalesPhone">--</span></div>
+          </div>
           <h2 class="section-title">試算結果</h2>
 
           <div class="summary-top">
@@ -760,6 +794,18 @@
     });
 
 
+    function loadSalesInfo() {
+      const name = localStorage.getItem('salesName') || '';
+      const phone = localStorage.getItem('salesPhone') || '';
+      const box = document.getElementById('salesPrintInfo');
+      const nameEl = document.getElementById('printSalesName');
+      const phoneEl = document.getElementById('printSalesPhone');
+      if (!box || !nameEl || !phoneEl) return;
+      nameEl.textContent = name || '--';
+      phoneEl.textContent = phone || '--';
+      box.style.display = (name || phone) ? 'block' : 'none';
+    }
+
     document.getElementById('printResultBtn').addEventListener('click', () => {
       window.print();
     });
@@ -770,6 +816,7 @@
     document.getElementById('transferYear').value = '113';
     document.getElementById('transferMonth').value = '06';
     queryCpiByTransferDate();
+    loadSalesInfo();
     calculate();
   </script>
 </body>

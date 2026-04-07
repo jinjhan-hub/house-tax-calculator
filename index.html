@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>稅務試算入口</title>
+  <title>太平洋房屋站前店稅務試算入口</title>
   <style>
     :root {
       --bg: #f5f7fb;
@@ -59,6 +59,37 @@
       color: var(--muted);
       font-size: 16px;
       line-height: 1.8;
+    }
+
+
+    .form-box {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 0 auto 24px;
+      max-width: 620px;
+      text-align: left;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      background: #fff;
     }
 
     .button-grid {
@@ -131,7 +162,38 @@
         margin-bottom: 24px;
       }
 
-      .button-grid {
+  
+    .form-box {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin: 0 auto 24px;
+      max-width: 620px;
+      text-align: left;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    .button-grid {
         grid-template-columns: 1fr;
       }
 
@@ -145,18 +207,29 @@
 <body>
   <div class="container">
     <div class="card">
-      <h1>稅務試算入口</h1>
+      <h1>太平洋房屋站前店稅務試算入口</h1>
       <p class="subtitle">
-        請選擇要使用的試算工具
+        請先填寫客戶資料，再選擇要使用的試算工具
       </p>
 
+      <div class="form-box">
+        <div class="field">
+          <label for="salesName">業務姓名</label>
+          <input id="salesName" type="text" placeholder="請輸入姓名" />
+        </div>
+        <div class="field">
+          <label for="salesPhone">業務手機</label>
+          <input id="salesPhone" type="tel" inputmode="numeric" placeholder="請輸入手機號碼" />
+        </div>
+      </div>
+
       <div class="button-grid">
-        <a class="menu-btn btn-house" href="./house-sale-tax-calculator.html">
+        <a class="menu-btn btn-house" href="./house-sale-tax-calculator.html" onclick="saveSalesInfo()">
           房地合一稅試算
           <span class="desc">進入房地合一稅計算頁面</span>
         </a>
 
-        <a class="menu-btn btn-land" href="./land-tax-calculator.html">
+        <a class="menu-btn btn-land" href="./land-tax-calculator.html" onclick="saveSalesInfo()">
           土地增值稅試算
           <span class="desc">進入土地增值稅計算頁面</span>
         </a>
@@ -167,5 +240,18 @@
       </div>
     </div>
   </div>
+  <script>
+    function saveSalesInfo() {
+      const name = document.getElementById('salesName').value.trim();
+      const phone = document.getElementById('salesPhone').value.trim();
+      localStorage.setItem('salesName', name);
+      localStorage.setItem('salesPhone', phone);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('salesName').value = localStorage.getItem('salesName') || '';
+      document.getElementById('salesPhone').value = localStorage.getItem('salesPhone') || '';
+    });
+  </script>
 </body>
 </html>
