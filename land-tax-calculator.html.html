@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<!-- GitHub Pages ready: upload this file as index.html -->
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>太平洋房屋站前店土地增值稅試算</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --line: #e2e8f0;
+      --primary: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 32px;
+    }
+    .subtitle {
+      margin: 0 0 20px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 24px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    }
+    .section-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin: 0 0 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .field.full { grid-column: 1 / -1; }
+    label {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      font-size: 15px;
+      background: white;
+    }
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .fraction {
+      display: grid;
+      grid-template-columns: 1fr 40px 1fr;
+      gap: 8px;
+      align-items: center;
+      max-width: 280px;
+    }
+    .slash {
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .row > * {
+      flex: 1 1 auto;
+    }
+    .w-auto {
+      flex: 0 0 auto;
+    }
+    button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+    .summary-top {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .mini-box {
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .mini-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+    .mini-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .tax-box {
+      background: #f8fafc;
+      color: #0f172a;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .tax-box .label {
+      color: #475569;
+      font-size: 14px;
+    }
+    .tax-box .value {
+      margin-top: 8px;
+      font-size: 32px;
+      font-weight: 800;
+    }
+    .tax-box .value.small {
+      font-size: 28px;
+    }
+    .detail-list {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+    .detail-item {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      line-height: 1.7;
+    }
+    .detail-item:last-child { border-bottom: 0; }
+    .detail-item .key { color: var(--muted); }
+    .detail-item .val { font-weight: 700; text-align: right; }
+    .formula {
+      margin-top: 20px;
+    }
+    .formula-block {
+      margin-top: 12px;
+      padding: 14px 16px;
+      background: #f8fafc;
+      border-radius: 14px;
+      line-height: 1.8;
+    }
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .grid { grid-template-columns: 1fr; }
+      .row { flex-direction: column; align-items: stretch; }
+      .w-auto { width: 100%; }
+    }
+
+    .print-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .result-print-wrap {
+      position: relative;
+    }
+    .watermark {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 50;
+    }
+    .watermark span {
+      font-size: 56px;
+      font-weight: 800;
+      color: rgba(15, 23, 42, 0.035);
+      transform: rotate(-24deg);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .print-surface {
+      position: relative;
+      z-index: 1;
+    }
+
+    .sales-print-info {
+      display: none;
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .print-title {
+      display: none;
+      margin: 0 0 12px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 800;
+    }
+    .print-subtitle {
+      display: none;
+      margin: 0 0 18px;
+      text-align: center;
+      color: #334155;
+      font-size: 13px;
+    }
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+    @media print {
+      html, body {
+        width: auto;
+        height: auto;
+        min-height: 0;
+        background: #fff;
+        overflow: visible !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      body {
+        margin: 0;
+      }
+      .wrap,
+      .layout,
+      section,
+      .result-print-wrap,
+      .print-surface {
+        height: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
+      }
+      .wrap {
+        max-width: none;
+        padding: 0;
+      }
+      .layout {
+        display: block;
+      }
+      section:first-child {
+        display: none !important;
+      }
+      section:last-child {
+        display: block !important;
+      }
+      .card {
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        padding: 0;
+      }
+      .print-surface {
+        padding: 0;
+      }
+      .print-actions {
+        display: none !important;
+      }
+      .print-title,
+      .print-subtitle {
+        display: block;
+      }
+  
+    .sales-print-info {
+      display: none;
+      margin: 0 0 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+    .print-title {
+        font-size: 18px;
+        margin: 0 0 6px;
+      }
+      .print-subtitle {
+        font-size: 11px;
+        margin: 0 0 10px;
+      }
+      .section-title {
+        font-size: 18px;
+        margin: 0 0 10px;
+      }
+      .summary-top {
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .mini-box {
+        padding: 10px;
+        border-radius: 10px;
+      }
+      .mini-label {
+        font-size: 11px;
+        margin-bottom: 2px;
+      }
+      .mini-value {
+        font-size: 16px;
+      }
+      .tax-box {
+        break-inside: avoid;
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 10px;
+      }
+      .tax-box .label {
+        color: #475569 !important;
+        font-size: 11px;
+      }
+      .tax-box .value {
+        font-size: 24px;
+        margin-top: 4px;
+      }
+      .tax-box .value.small {
+        font-size: 20px;
+      }
+      .detail-list,
+      .formula-block,
+      .summary-top {
+        break-inside: avoid;
+      }
+      .detail-list {
+        border-radius: 10px;
+        padding: 8px 12px;
+      }
+      .detail-item {
+        padding: 6px 0;
+        line-height: 1.45;
+        font-size: 12px;
+      }
+      .formula {
+        margin-top: 10px;
+      }
+      .formula h3.section-title {
+        font-size: 15px !important;
+        margin-top: 0 !important;
+        margin-bottom: 8px !important;
+      }
+      .formula-block {
+        margin-top: 0;
+        padding: 10px 12px;
+        border-radius: 10px;
+        line-height: 1.55;
+        font-size: 12px;
+      }
+      .footer-note {
+        display: block !important;
+        margin-top: 8px;
+        font-size: 10px;
+        line-height: 1.45;
+        color: #475569;
+      }
+      #printDisclaimer {
+        display: block !important;
+        margin-top: 6px;
+        font-size: 10px;
+        line-height: 1.45;
+      }
+      .watermark {
+        z-index: 9999 !important;
+      }
+      .watermark span {
+        font-size: 60px;
+        color: rgba(15, 23, 42, 0.03) !important;
+      }
+      .print-surface {
+        position: relative;
+        z-index: 1;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>太平洋房屋站前店土地增值稅試算</h1>
+    <p class="subtitle">
+      可輸入土地類型、面積、公告現值、前次移轉、前次移轉年月、移轉或設典範圍，並由官方物價指數下拉選單自動帶入稅務專用物價指數。巫建穎製作
+    </p>
+
+    <div class="layout">
+      <section>
+        <div class="card">
+          <h2 class="section-title">輸入欄位</h2>
+          <div class="grid">
+            <div class="field">
+              <label for="landType">土地類型</label>
+              <select id="landType">
+                <option value="urban">都市土地</option>
+                <option value="nonUrban">非都市土地</option>
+              </select>
+              <div class="hint">目前僅作案件資訊顯示，不直接改變一般用地稅率公式。</div>
+            </div>
+
+            <div class="field">
+              <label for="lotArea">面積（平方公尺）</label>
+              <input id="lotArea" type="number" step="0.0001" value="50" />
+            </div>
+
+            <div class="field">
+              <label for="currentAnnouncedLandValue">公告現值（元 / 每平方公尺）</label>
+              <input id="currentAnnouncedLandValue" type="number" value="160000" />
+            </div>
+
+            <div class="field">
+              <label for="previousDeclaredValue">前次移轉（元 / 每平方公尺）</label>
+              <input id="previousDeclaredValue" type="number" value="20000" />
+            </div>
+
+            <div class="field">
+              <label for="transferYear">前次移轉年月</label>
+              <div class="row">
+                <select id="transferYear"></select>
+                <select id="transferMonth"></select>
+                <button class="btn-secondary w-auto" type="button" id="queryCpi">查詢並帶入</button>
+              </div>
+              <div class="hint">先選民國年與月份，再按查詢並帶入；持有年期會依你開啟網頁當下日期自動計算。</div>
+            </div>
+
+            <div class="field">
+              <label>移轉或設典範圍</label>
+              <div class="fraction">
+                <input id="shareNumerator" type="number" value="1" />
+                <div class="slash">/</div>
+                <input id="shareDenominator" type="number" value="1" />
+              </div>
+              <div class="hint">例如持分 1/2，請輸入 1 與 2。</div>
+            </div>
+
+            <div class="field">
+              <label for="cpiMonthSelect">消費者物價指數</label>
+              <select id="cpiMonthSelect"></select>
+              <div class="hint" id="cpiHint">選取後會自動帶入對應的稅務專用物價指數。</div>
+            </div>
+
+            <input id="cpiIndex" type="hidden" value="100.0" />
+
+            <div class="field full">
+              <div class="row">
+                <button class="btn-primary w-auto" type="button" id="exampleBtn">載入範例</button>
+                <button class="btn-secondary w-auto" type="button" id="resetBtn">清空重填</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="card result-print-wrap">
+          <div class="watermark"><span>太平洋房屋員林站前店</span></div>
+          <div class="print-surface">
+          <div class="print-title">土地增值稅試算結果</div>
+          <div class="print-subtitle">太平洋房屋員林站前店</div>
+          <div class="sales-print-info" id="salesPrintInfo">
+            <div>業務姓名：<span id="printSalesName">--</span></div>
+            <div>業務手機：<span id="printSalesPhone">--</span></div>
+          </div>
+          <h2 class="section-title">試算結果</h2>
+
+          <div class="summary-top">
+            <div class="mini-box">
+              <div class="mini-label">適用級距</div>
+              <div class="mini-value" id="bracket">-</div>
+            </div>
+            <div class="mini-box">
+              <div class="mini-label">持有條件</div>
+              <div class="mini-value" id="holdingRule">-</div>
+            </div>
+          </div>
+
+          <div class="tax-box">
+            <div class="label">一般用地預估土地增值稅</div>
+            <div class="value" id="taxValue">NT$ 0</div>
+            <div class="label" style="margin-top:14px;">自用住宅用地預估土地增值稅</div>
+            <div class="value small" id="selfUseTaxValue">NT$ 0</div>
+          </div>
+
+          <div class="detail-list">
+            <div class="detail-item"><div class="key">自動計算持有年期</div><div class="val" id="holdingYearsText">0 年</div></div>
+            <div class="detail-item"><div class="key">套用物價指數</div><div class="val" id="appliedCpiText">0%</div></div>
+            <div class="detail-item"><div class="key">移轉持分</div><div class="val" id="shareText">0</div></div>
+            <div class="detail-item"><div class="key">申報移轉現值總額</div><div class="val" id="currentTotal">NT$ 0</div></div>
+            <div class="detail-item"><div class="key">調整後原地價總額</div><div class="val" id="adjustedPreviousTotal">NT$ 0</div></div>
+            <div class="detail-item"><div class="key">土地漲價總數額</div><div class="val" id="incrementTotal">NT$ 0</div></div>
+            <div class="detail-item"><div class="key">漲價倍數</div><div class="val" id="ratioText">0%</div></div>
+            <div class="detail-item"><div class="key">適用稅率</div><div class="val" id="taxRateText">0%</div></div>
+            <div class="detail-item"><div class="key">累進差額</div><div class="val" id="progressiveDiff">NT$ 0</div></div>
+            <div class="detail-item"><div class="key">自用住宅用地稅率</div><div class="val" id="selfUseRate">10%</div></div>
+          </div>
+
+          <div class="formula">
+            <h3 class="section-title" style="font-size:18px; margin-top:20px;">計算說明</h3>
+            <div class="formula-block">
+              <div><strong>1. 申報移轉現值總額：</strong><span id="formula1"></span></div>
+              <div><strong>2. 調整後原地價總額：</strong><span id="formula2"></span></div>
+              <div><strong>3. 土地漲價總數額：</strong><span id="formula3"></span></div>
+              <div><strong>4. 稅額公式：</strong><span id="formula4"></span></div>
+            </div>
+          </div>
+
+          <div class="print-actions">
+            <button class="btn-primary w-auto" type="button" id="printResultBtn">列印試算結果 / 另存 PDF</button>
+            <div class="hint">列印時已優化為單張 A4 版面。</div>
+          </div>
+
+          <div class="footer-note">
+            本程式為一般用地與自用住宅用地試算版。正式申報時，仍應以稅捐機關核定資料、適用資格與正式申報資料為準。
+          </div>
+
+          <div class="footer-note" id="printDisclaimer">
+            免責聲明：本試算結果僅供初步估算與內部參考，不構成稅務、法律、會計或不動產交易之正式意見。實際土地增值稅金額、適用一般用地或自用住宅用地稅率、物價指數、持有年期、減免資格及相關費用，仍應以主管機關、稅捐稽徵機關或專業人士之最終認定與核算結果為準。
+          </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const cpiMonthOptions = [{"year": 48, "month": 1, "cpi": 9.86, "taxPct": 1124.8, "value": "48-01", "label": "48年01月(1124.8%)"}, {"year": 48, "month": 2, "cpi": 9.94, "taxPct": 1115.8, "value": "48-02", "label": "48年02月(1115.8%)"}, {"year": 48, "month": 3, "cpi": 10.09, "taxPct": 1099.2, "value": "48-03", "label": "48年03月(1099.2%)"}, {"year": 48, "month": 4, "cpi": 10.08, "taxPct": 1100.3, "value": "48-04", "label": "48年04月(1100.3%)"}, {"year": 48, "month": 5, "cpi": 10.09, "taxPct": 1099.2, "value": "48-05", "label": "48年05月(1099.2%)"}, {"year": 48, "month": 6, "cpi": 10.26, "taxPct": 1081.0, "value": "48-06", "label": "48年06月(1081.0%)"}, {"year": 48, "month": 7, "cpi": 10.58, "taxPct": 1048.3, "value": "48-07", "label": "48年07月(1048.3%)"}, {"year": 48, "month": 8, "cpi": 11.16, "taxPct": 993.8, "value": "48-08", "label": "48年08月(993.8%)"}, {"year": 48, "month": 9, "cpi": 11.5, "taxPct": 964.4, "value": "48-09", "label": "48年09月(964.4%)"}, {"year": 48, "month": 10, "cpi": 11.32, "taxPct": 979.8, "value": "48-10", "label": "48年10月(979.8%)"}, {"year": 48, "month": 11, "cpi": 11.0, "taxPct": 1008.3, "value": "48-11", "label": "48年11月(1008.3%)"}, {"year": 48, "month": 12, "cpi": 10.99, "taxPct": 1009.2, "value": "48-12", "label": "48年12月(1009.2%)"}, {"year": 49, "month": 1, "cpi": 11.09, "taxPct": 1000.1, "value": "49-01", "label": "49年01月(1000.1%)"}, {"year": 49, "month": 2, "cpi": 11.34, "taxPct": 978.0, "value": "49-02", "label": "49年02月(978.0%)"}, {"year": 49, "month": 3, "cpi": 11.74, "taxPct": 944.7, "value": "49-03", "label": "49年03月(944.7%)"}, {"year": 49, "month": 4, "cpi": 12.3, "taxPct": 901.7, "value": "49-04", "label": "49年04月(901.7%)"}, {"year": 49, "month": 5, "cpi": 12.24, "taxPct": 906.1, "value": "49-05", "label": "49年05月(906.1%)"}, {"year": 49, "month": 6, "cpi": 12.6, "taxPct": 880.2, "value": "49-06", "label": "49年06月(880.2%)"}, {"year": 49, "month": 7, "cpi": 12.69, "taxPct": 874.0, "value": "49-07", "label": "49年07月(874.0%)"}, {"year": 49, "month": 8, "cpi": 13.25, "taxPct": 837.1, "value": "49-08", "label": "49年08月(837.1%)"}, {"year": 49, "month": 9, "cpi": 13.42, "taxPct": 826.5, "value": "49-09", "label": "49年09月(826.5%)"}, {"year": 49, "month": 10, "cpi": 13.3, "taxPct": 833.9, "value": "49-10", "label": "49年10月(833.9%)"}, {"year": 49, "month": 11, "cpi": 13.31, "taxPct": 833.3, "value": "49-11", "label": "49年11月(833.3%)"}, {"year": 49, "month": 12, "cpi": 13.07, "taxPct": 848.6, "value": "49-12", "label": "49年12月(848.6%)"}, {"year": 50, "month": 1, "cpi": 13.1, "taxPct": 846.6, "value": "50-01", "label": "50年01月(846.6%)"}, {"year": 50, "month": 2, "cpi": 13.35, "taxPct": 830.8, "value": "50-02", "label": "50年02月(830.8%)"}, {"year": 50, "month": 3, "cpi": 13.35, "taxPct": 830.8, "value": "50-03", "label": "50年03月(830.8%)"}, {"year": 50, "month": 4, "cpi": 13.45, "taxPct": 824.6, "value": "50-04", "label": "50年04月(824.6%)"}, {"year": 50, "month": 5, "cpi": 13.46, "taxPct": 824.0, "value": "50-05", "label": "50年05月(824.0%)"}, {"year": 50, "month": 6, "cpi": 13.46, "taxPct": 824.0, "value": "50-06", "label": "50年06月(824.0%)"}, {"year": 50, "month": 7, "cpi": 13.4, "taxPct": 827.7, "value": "50-07", "label": "50年07月(827.7%)"}, {"year": 50, "month": 8, "cpi": 13.56, "taxPct": 817.9, "value": "50-08", "label": "50年08月(817.9%)"}, {"year": 50, "month": 9, "cpi": 13.77, "taxPct": 805.4, "value": "50-09", "label": "50年09月(805.4%)"}, {"year": 50, "month": 10, "cpi": 13.86, "taxPct": 800.2, "value": "50-10", "label": "50年10月(800.2%)"}, {"year": 50, "month": 11, "cpi": 13.75, "taxPct": 806.6, "value": "50-11", "label": "50年11月(806.6%)"}, {"year": 50, "month": 12, "cpi": 13.62, "taxPct": 814.3, "value": "50-12", "label": "50年12月(814.3%)"}, {"year": 51, "month": 1, "cpi": 13.53, "taxPct": 819.7, "value": "51-01", "label": "51年01月(819.7%)"}, {"year": 51, "month": 2, "cpi": 13.68, "taxPct": 810.7, "value": "51-02", "label": "51年02月(810.7%)"}, {"year": 51, "month": 3, "cpi": 13.63, "taxPct": 813.7, "value": "51-03", "label": "51年03月(813.7%)"}, {"year": 51, "month": 4, "cpi": 13.69, "taxPct": 810.2, "value": "51-04", "label": "51年04月(810.2%)"}, {"year": 51, "month": 5, "cpi": 13.87, "taxPct": 799.6, "value": "51-05", "label": "51年05月(799.6%)"}, {"year": 51, "month": 6, "cpi": 13.79, "taxPct": 804.3, "value": "51-06", "label": "51年06月(804.3%)"}, {"year": 51, "month": 7, "cpi": 13.58, "taxPct": 816.7, "value": "51-07", "label": "51年07月(816.7%)"}, {"year": 51, "month": 8, "cpi": 13.72, "taxPct": 808.4, "value": "51-08", "label": "51年08月(808.4%)"}, {"year": 51, "month": 9, "cpi": 14.05, "taxPct": 789.4, "value": "51-09", "label": "51年09月(789.4%)"}, {"year": 51, "month": 10, "cpi": 14.31, "taxPct": 775.1, "value": "51-10", "label": "51年10月(775.1%)"}, {"year": 51, "month": 11, "cpi": 14.12, "taxPct": 785.5, "value": "51-11", "label": "51年11月(785.5%)"}, {"year": 51, "month": 12, "cpi": 14.01, "taxPct": 791.6, "value": "51-12", "label": "51年12月(791.6%)"}, {"year": 52, "month": 1, "cpi": 14.15, "taxPct": 783.8, "value": "52-01", "label": "52年01月(783.8%)"}, {"year": 52, "month": 2, "cpi": 14.16, "taxPct": 783.3, "value": "52-02", "label": "52年02月(783.3%)"}, {"year": 52, "month": 3, "cpi": 14.19, "taxPct": 781.6, "value": "52-03", "label": "52年03月(781.6%)"}, {"year": 52, "month": 4, "cpi": 14.28, "taxPct": 776.7, "value": "52-04", "label": "52年04月(776.7%)"}, {"year": 52, "month": 5, "cpi": 14.16, "taxPct": 783.3, "value": "52-05", "label": "52年05月(783.3%)"}, {"year": 52, "month": 6, "cpi": 14.03, "taxPct": 790.5, "value": "52-06", "label": "52年06月(790.5%)"}, {"year": 52, "month": 7, "cpi": 13.86, "taxPct": 800.2, "value": "52-07", "label": "52年07月(800.2%)"}, {"year": 52, "month": 8, "cpi": 13.89, "taxPct": 798.5, "value": "52-08", "label": "52年08月(798.5%)"}, {"year": 52, "month": 9, "cpi": 14.32, "taxPct": 774.5, "value": "52-09", "label": "52年09月(774.5%)"}, {"year": 52, "month": 10, "cpi": 14.31, "taxPct": 775.1, "value": "52-10", "label": "52年10月(775.1%)"}, {"year": 52, "month": 11, "cpi": 14.14, "taxPct": 784.4, "value": "52-11", "label": "52年11月(784.4%)"}, {"year": 52, "month": 12, "cpi": 14.1, "taxPct": 786.6, "value": "52-12", "label": "52年12月(786.6%)"}, {"year": 53, "month": 1, "cpi": 14.12, "taxPct": 785.5, "value": "53-01", "label": "53年01月(785.5%)"}, {"year": 53, "month": 2, "cpi": 14.14, "taxPct": 784.4, "value": "53-02", "label": "53年02月(784.4%)"}, {"year": 53, "month": 3, "cpi": 14.09, "taxPct": 787.2, "value": "53-03", "label": "53年03月(787.2%)"}, {"year": 53, "month": 4, "cpi": 14.0, "taxPct": 792.2, "value": "53-04", "label": "53年04月(792.2%)"}, {"year": 53, "month": 5, "cpi": 14.05, "taxPct": 789.4, "value": "53-05", "label": "53年05月(789.4%)"}, {"year": 53, "month": 6, "cpi": 13.94, "taxPct": 795.6, "value": "53-06", "label": "53年06月(795.6%)"}, {"year": 53, "month": 7, "cpi": 13.83, "taxPct": 802.0, "value": "53-07", "label": "53年07月(802.0%)"}, {"year": 53, "month": 8, "cpi": 13.99, "taxPct": 792.8, "value": "53-08", "label": "53年08月(792.8%)"}, {"year": 53, "month": 9, "cpi": 14.19, "taxPct": 781.6, "value": "53-09", "label": "53年09月(781.6%)"}, {"year": 53, "month": 10, "cpi": 14.4, "taxPct": 770.2, "value": "53-10", "label": "53年10月(770.2%)"}, {"year": 53, "month": 11, "cpi": 14.38, "taxPct": 771.3, "value": "53-11", "label": "53年11月(771.3%)"}, {"year": 53, "month": 12, "cpi": 14.19, "taxPct": 781.6, "value": "53-12", "label": "53年12月(781.6%)"}, {"year": 54, "month": 1, "cpi": 14.0, "taxPct": 792.2, "value": "54-01", "label": "54年01月(792.2%)"}, {"year": 54, "month": 2, "cpi": 13.96, "taxPct": 794.5, "value": "54-02", "label": "54年02月(794.5%)"}, {"year": 54, "month": 3, "cpi": 13.91, "taxPct": 797.3, "value": "54-03", "label": "54年03月(797.3%)"}, {"year": 54, "month": 4, "cpi": 13.96, "taxPct": 794.5, "value": "54-04", "label": "54年04月(794.5%)"}, {"year": 54, "month": 5, "cpi": 14.03, "taxPct": 790.5, "value": "54-05", "label": "54年05月(790.5%)"}, {"year": 54, "month": 6, "cpi": 14.1, "taxPct": 786.6, "value": "54-06", "label": "54年06月(786.6%)"}, {"year": 54, "month": 7, "cpi": 14.12, "taxPct": 785.5, "value": "54-07", "label": "54年07月(785.5%)"}, {"year": 54, "month": 8, "cpi": 14.2, "taxPct": 781.1, "value": "54-08", "label": "54年08月(781.1%)"}, {"year": 54, "month": 9, "cpi": 14.27, "taxPct": 777.2, "value": "54-09", "label": "54年09月(777.2%)"}, {"year": 54, "month": 10, "cpi": 14.16, "taxPct": 783.3, "value": "54-10", "label": "54年10月(783.3%)"}, {"year": 54, "month": 11, "cpi": 14.19, "taxPct": 781.6, "value": "54-11", "label": "54年11月(781.6%)"}, {"year": 54, "month": 12, "cpi": 14.27, "taxPct": 777.2, "value": "54-12", "label": "54年12月(777.2%)"}, {"year": 55, "month": 1, "cpi": 14.23, "taxPct": 779.4, "value": "55-01", "label": "55年01月(779.4%)"}, {"year": 55, "month": 2, "cpi": 14.03, "taxPct": 790.5, "value": "55-02", "label": "55年02月(790.5%)"}, {"year": 55, "month": 3, "cpi": 14.01, "taxPct": 791.6, "value": "55-03", "label": "55年03月(791.6%)"}, {"year": 55, "month": 4, "cpi": 14.11, "taxPct": 786.0, "value": "55-04", "label": "55年04月(786.0%)"}, {"year": 55, "month": 5, "cpi": 14.14, "taxPct": 784.4, "value": "55-05", "label": "55年05月(784.4%)"}, {"year": 55, "month": 6, "cpi": 14.47, "taxPct": 766.5, "value": "55-06", "label": "55年06月(766.5%)"}, {"year": 55, "month": 7, "cpi": 14.49, "taxPct": 765.4, "value": "55-07", "label": "55年07月(765.4%)"}, {"year": 55, "month": 8, "cpi": 14.42, "taxPct": 769.1, "value": "55-08", "label": "55年08月(769.1%)"}, {"year": 55, "month": 9, "cpi": 14.72, "taxPct": 753.5, "value": "55-09", "label": "55年09月(753.5%)"}, {"year": 55, "month": 10, "cpi": 14.82, "taxPct": 748.4, "value": "55-10", "label": "55年10月(748.4%)"}, {"year": 55, "month": 11, "cpi": 14.62, "taxPct": 758.6, "value": "55-11", "label": "55年11月(758.6%)"}, {"year": 55, "month": 12, "cpi": 14.51, "taxPct": 764.4, "value": "55-12", "label": "55年12月(764.4%)"}, {"year": 56, "month": 1, "cpi": 14.62, "taxPct": 758.6, "value": "56-01", "label": "56年01月(758.6%)"}, {"year": 56, "month": 2, "cpi": 14.9, "taxPct": 744.4, "value": "56-02", "label": "56年02月(744.4%)"}, {"year": 56, "month": 3, "cpi": 14.64, "taxPct": 757.6, "value": "56-03", "label": "56年03月(757.6%)"}, {"year": 56, "month": 4, "cpi": 14.61, "taxPct": 759.1, "value": "56-04", "label": "56年04月(759.1%)"}, {"year": 56, "month": 5, "cpi": 14.67, "taxPct": 756.0, "value": "56-05", "label": "56年05月(756.0%)"}, {"year": 56, "month": 6, "cpi": 14.78, "taxPct": 750.4, "value": "56-06", "label": "56年06月(750.4%)"}, {"year": 56, "month": 7, "cpi": 14.97, "taxPct": 740.9, "value": "56-07", "label": "56年07月(740.9%)"}, {"year": 56, "month": 8, "cpi": 14.94, "taxPct": 742.4, "value": "56-08", "label": "56年08月(742.4%)"}, {"year": 56, "month": 9, "cpi": 15.1, "taxPct": 734.5, "value": "56-09", "label": "56年09月(734.5%)"}, {"year": 56, "month": 10, "cpi": 15.02, "taxPct": 738.4, "value": "56-10", "label": "56年10月(738.4%)"}, {"year": 56, "month": 11, "cpi": 15.0, "taxPct": 739.4, "value": "56-11", "label": "56年11月(739.4%)"}, {"year": 56, "month": 12, "cpi": 15.15, "taxPct": 732.1, "value": "56-12", "label": "56年12月(732.1%)"}, {"year": 57, "month": 1, "cpi": 15.22, "taxPct": 728.7, "value": "57-01", "label": "57年01月(728.7%)"}, {"year": 57, "month": 2, "cpi": 15.11, "taxPct": 734.0, "value": "57-02", "label": "57年02月(734.0%)"}, {"year": 57, "month": 3, "cpi": 15.15, "taxPct": 732.1, "value": "57-03", "label": "57年03月(732.1%)"}, {"year": 57, "month": 4, "cpi": 15.8, "taxPct": 702.0, "value": "57-04", "label": "57年04月(702.0%)"}, {"year": 57, "month": 5, "cpi": 15.88, "taxPct": 698.4, "value": "57-05", "label": "57年05月(698.4%)"}, {"year": 57, "month": 6, "cpi": 16.17, "taxPct": 685.9, "value": "57-06", "label": "57年06月(685.9%)"}, {"year": 57, "month": 7, "cpi": 16.44, "taxPct": 674.6, "value": "57-07", "label": "57年07月(674.6%)"}, {"year": 57, "month": 8, "cpi": 16.86, "taxPct": 657.8, "value": "57-08", "label": "57年08月(657.8%)"}, {"year": 57, "month": 9, "cpi": 16.61, "taxPct": 667.7, "value": "57-09", "label": "57年09月(667.7%)"}, {"year": 57, "month": 10, "cpi": 16.72, "taxPct": 663.3, "value": "57-10", "label": "57年10月(663.3%)"}, {"year": 57, "month": 11, "cpi": 16.4, "taxPct": 676.3, "value": "57-11", "label": "57年11月(676.3%)"}, {"year": 57, "month": 12, "cpi": 16.07, "taxPct": 690.2, "value": "57-12", "label": "57年12月(690.2%)"}, {"year": 58, "month": 1, "cpi": 16.2, "taxPct": 684.6, "value": "58-01", "label": "58年01月(684.6%)"}, {"year": 58, "month": 2, "cpi": 16.41, "taxPct": 675.9, "value": "58-02", "label": "58年02月(675.9%)"}, {"year": 58, "month": 3, "cpi": 16.35, "taxPct": 678.3, "value": "58-03", "label": "58年03月(678.3%)"}, {"year": 58, "month": 4, "cpi": 16.43, "taxPct": 675.0, "value": "58-04", "label": "58年04月(675.0%)"}, {"year": 58, "month": 5, "cpi": 16.25, "taxPct": 682.5, "value": "58-05", "label": "58年05月(682.5%)"}, {"year": 58, "month": 6, "cpi": 16.39, "taxPct": 676.7, "value": "58-06", "label": "58年06月(676.7%)"}, {"year": 58, "month": 7, "cpi": 16.73, "taxPct": 662.9, "value": "58-07", "label": "58年07月(662.9%)"}, {"year": 58, "month": 8, "cpi": 17.06, "taxPct": 650.1, "value": "58-08", "label": "58年08月(650.1%)"}, {"year": 58, "month": 9, "cpi": 17.05, "taxPct": 650.5, "value": "58-09", "label": "58年09月(650.5%)"}, {"year": 58, "month": 10, "cpi": 18.6, "taxPct": 596.3, "value": "58-10", "label": "58年10月(596.3%)"}, {"year": 58, "month": 11, "cpi": 17.79, "taxPct": 623.4, "value": "58-11", "label": "58年11月(623.4%)"}, {"year": 58, "month": 12, "cpi": 17.0, "taxPct": 652.4, "value": "58-12", "label": "58年12月(652.4%)"}, {"year": 59, "month": 1, "cpi": 16.8, "taxPct": 660.2, "value": "59-01", "label": "59年01月(660.2%)"}, {"year": 59, "month": 2, "cpi": 17.08, "taxPct": 649.4, "value": "59-02", "label": "59年02月(649.4%)"}, {"year": 59, "month": 3, "cpi": 17.19, "taxPct": 645.2, "value": "59-03", "label": "59年03月(645.2%)"}, {"year": 59, "month": 4, "cpi": 17.27, "taxPct": 642.2, "value": "59-04", "label": "59年04月(642.2%)"}, {"year": 59, "month": 5, "cpi": 17.19, "taxPct": 645.2, "value": "59-05", "label": "59年05月(645.2%)"}, {"year": 59, "month": 6, "cpi": 17.05, "taxPct": 650.5, "value": "59-06", "label": "59年06月(650.5%)"}, {"year": 59, "month": 7, "cpi": 17.33, "taxPct": 640.0, "value": "59-07", "label": "59年07月(640.0%)"}, {"year": 59, "month": 8, "cpi": 17.84, "taxPct": 621.7, "value": "59-08", "label": "59年08月(621.7%)"}, {"year": 59, "month": 9, "cpi": 18.3, "taxPct": 606.1, "value": "59-09", "label": "59年09月(606.1%)"}, {"year": 59, "month": 10, "cpi": 18.02, "taxPct": 615.5, "value": "59-10", "label": "59年10月(615.5%)"}, {"year": 59, "month": 11, "cpi": 17.8, "taxPct": 623.1, "value": "59-11", "label": "59年11月(623.1%)"}, {"year": 59, "month": 12, "cpi": 17.63, "taxPct": 629.1, "value": "59-12", "label": "59年12月(629.1%)"}, {"year": 60, "month": 1, "cpi": 17.95, "taxPct": 617.9, "value": "60-01", "label": "60年01月(617.9%)"}, {"year": 60, "month": 2, "cpi": 17.88, "taxPct": 620.3, "value": "60-02", "label": "60年02月(620.3%)"}, {"year": 60, "month": 3, "cpi": 17.79, "taxPct": 623.4, "value": "60-03", "label": "60年03月(623.4%)"}, {"year": 60, "month": 4, "cpi": 17.75, "taxPct": 624.8, "value": "60-04", "label": "60年04月(624.8%)"}, {"year": 60, "month": 5, "cpi": 17.77, "taxPct": 624.1, "value": "60-05", "label": "60年05月(624.1%)"}, {"year": 60, "month": 6, "cpi": 17.77, "taxPct": 624.1, "value": "60-06", "label": "60年06月(624.1%)"}, {"year": 60, "month": 7, "cpi": 17.78, "taxPct": 623.8, "value": "60-07", "label": "60年07月(623.8%)"}, {"year": 60, "month": 8, "cpi": 18.09, "taxPct": 613.1, "value": "60-08", "label": "60年08月(613.1%)"}, {"year": 60, "month": 9, "cpi": 18.08, "taxPct": 613.4, "value": "60-09", "label": "60年09月(613.4%)"}, {"year": 60, "month": 10, "cpi": 18.2, "taxPct": 609.4, "value": "60-10", "label": "60年10月(609.4%)"}, {"year": 60, "month": 11, "cpi": 18.15, "taxPct": 611.1, "value": "60-11", "label": "60年11月(611.1%)"}, {"year": 60, "month": 12, "cpi": 18.11, "taxPct": 612.4, "value": "60-12", "label": "60年12月(612.4%)"}, {"year": 61, "month": 1, "cpi": 17.84, "taxPct": 621.7, "value": "61-01", "label": "61年01月(621.7%)"}, {"year": 61, "month": 2, "cpi": 18.22, "taxPct": 608.7, "value": "61-02", "label": "61年02月(608.7%)"}, {"year": 61, "month": 3, "cpi": 18.18, "taxPct": 610.1, "value": "61-03", "label": "61年03月(610.1%)"}, {"year": 61, "month": 4, "cpi": 18.2, "taxPct": 609.4, "value": "61-04", "label": "61年04月(609.4%)"}, {"year": 61, "month": 5, "cpi": 18.29, "taxPct": 606.4, "value": "61-05", "label": "61年05月(606.4%)"}, {"year": 61, "month": 6, "cpi": 18.48, "taxPct": 600.2, "value": "61-06", "label": "61年06月(600.2%)"}, {"year": 61, "month": 7, "cpi": 18.64, "taxPct": 595.0, "value": "61-07", "label": "61年07月(595.0%)"}, {"year": 61, "month": 8, "cpi": 19.3, "taxPct": 574.7, "value": "61-08", "label": "61年08月(574.7%)"}, {"year": 61, "month": 9, "cpi": 19.25, "taxPct": 576.2, "value": "61-09", "label": "61年09月(576.2%)"}, {"year": 61, "month": 10, "cpi": 18.5, "taxPct": 599.5, "value": "61-10", "label": "61年10月(599.5%)"}, {"year": 61, "month": 11, "cpi": 18.26, "taxPct": 607.4, "value": "61-11", "label": "61年11月(607.4%)"}, {"year": 61, "month": 12, "cpi": 18.58, "taxPct": 596.9, "value": "61-12", "label": "61年12月(596.9%)"}, {"year": 62, "month": 1, "cpi": 18.1, "taxPct": 612.8, "value": "62-01", "label": "62年01月(612.8%)"}, {"year": 62, "month": 2, "cpi": 18.36, "taxPct": 604.1, "value": "62-02", "label": "62年02月(604.1%)"}, {"year": 62, "month": 3, "cpi": 18.3, "taxPct": 606.1, "value": "62-03", "label": "62年03月(606.1%)"}, {"year": 62, "month": 4, "cpi": 18.57, "taxPct": 597.3, "value": "62-04", "label": "62年04月(597.3%)"}, {"year": 62, "month": 5, "cpi": 18.81, "taxPct": 589.6, "value": "62-05", "label": "62年05月(589.6%)"}, {"year": 62, "month": 6, "cpi": 19.01, "taxPct": 583.4, "value": "62-06", "label": "62年06月(583.4%)"}, {"year": 62, "month": 7, "cpi": 19.55, "taxPct": 567.3, "value": "62-07", "label": "62年07月(567.3%)"}, {"year": 62, "month": 8, "cpi": 19.98, "taxPct": 555.1, "value": "62-08", "label": "62年08月(555.1%)"}, {"year": 62, "month": 9, "cpi": 20.82, "taxPct": 532.7, "value": "62-09", "label": "62年09月(532.7%)"}, {"year": 62, "month": 10, "cpi": 22.46, "taxPct": 493.8, "value": "62-10", "label": "62年10月(493.8%)"}, {"year": 62, "month": 11, "cpi": 22.91, "taxPct": 484.1, "value": "62-11", "label": "62年11月(484.1%)"}, {"year": 62, "month": 12, "cpi": 23.04, "taxPct": 481.4, "value": "62-12", "label": "62年12月(481.4%)"}, {"year": 63, "month": 1, "cpi": 25.3, "taxPct": 438.4, "value": "63-01", "label": "63年01月(438.4%)"}, {"year": 63, "month": 2, "cpi": 29.14, "taxPct": 380.6, "value": "63-02", "label": "63年02月(380.6%)"}, {"year": 63, "month": 3, "cpi": 29.54, "taxPct": 375.5, "value": "63-03", "label": "63年03月(375.5%)"}, {"year": 63, "month": 4, "cpi": 29.34, "taxPct": 378.0, "value": "63-04", "label": "63年04月(378.0%)"}, {"year": 63, "month": 5, "cpi": 29.1, "taxPct": 381.1, "value": "63-05", "label": "63年05月(381.1%)"}, {"year": 63, "month": 6, "cpi": 29.01, "taxPct": 382.3, "value": "63-06", "label": "63年06月(382.3%)"}, {"year": 63, "month": 7, "cpi": 29.39, "taxPct": 377.4, "value": "63-07", "label": "63年07月(377.4%)"}, {"year": 63, "month": 8, "cpi": 29.72, "taxPct": 373.2, "value": "63-08", "label": "63年08月(373.2%)"}, {"year": 63, "month": 9, "cpi": 30.67, "taxPct": 361.6, "value": "63-09", "label": "63年09月(361.6%)"}, {"year": 63, "month": 10, "cpi": 30.62, "taxPct": 362.2, "value": "63-10", "label": "63年10月(362.2%)"}, {"year": 63, "month": 11, "cpi": 31.06, "taxPct": 357.1, "value": "63-11", "label": "63年11月(357.1%)"}, {"year": 63, "month": 12, "cpi": 30.88, "taxPct": 359.2, "value": "63-12", "label": "63年12月(359.2%)"}, {"year": 64, "month": 1, "cpi": 30.59, "taxPct": 362.6, "value": "64-01", "label": "64年01月(362.6%)"}, {"year": 64, "month": 2, "cpi": 30.63, "taxPct": 362.1, "value": "64-02", "label": "64年02月(362.1%)"}, {"year": 64, "month": 3, "cpi": 30.37, "taxPct": 365.2, "value": "64-03", "label": "64年03月(365.2%)"}, {"year": 64, "month": 4, "cpi": 30.57, "taxPct": 362.8, "value": "64-04", "label": "64年04月(362.8%)"}, {"year": 64, "month": 5, "cpi": 30.59, "taxPct": 362.6, "value": "64-05", "label": "64年05月(362.6%)"}, {"year": 64, "month": 6, "cpi": 31.28, "taxPct": 354.6, "value": "64-06", "label": "64年06月(354.6%)"}, {"year": 64, "month": 7, "cpi": 31.28, "taxPct": 354.6, "value": "64-07", "label": "64年07月(354.6%)"}, {"year": 64, "month": 8, "cpi": 31.39, "taxPct": 353.3, "value": "64-08", "label": "64年08月(353.3%)"}, {"year": 64, "month": 9, "cpi": 31.35, "taxPct": 353.8, "value": "64-09", "label": "64年09月(353.8%)"}, {"year": 64, "month": 10, "cpi": 31.76, "taxPct": 349.2, "value": "64-10", "label": "64年10月(349.2%)"}, {"year": 64, "month": 11, "cpi": 31.5, "taxPct": 352.1, "value": "64-11", "label": "64年11月(352.1%)"}, {"year": 64, "month": 12, "cpi": 30.94, "taxPct": 358.5, "value": "64-12", "label": "64年12月(358.5%)"}, {"year": 65, "month": 1, "cpi": 31.48, "taxPct": 352.3, "value": "65-01", "label": "65年01月(352.3%)"}, {"year": 65, "month": 2, "cpi": 31.59, "taxPct": 351.1, "value": "65-02", "label": "65年02月(351.1%)"}, {"year": 65, "month": 3, "cpi": 31.84, "taxPct": 348.3, "value": "65-03", "label": "65年03月(348.3%)"}, {"year": 65, "month": 4, "cpi": 31.92, "taxPct": 347.5, "value": "65-04", "label": "65年04月(347.5%)"}, {"year": 65, "month": 5, "cpi": 31.76, "taxPct": 349.2, "value": "65-05", "label": "65年05月(349.2%)"}, {"year": 65, "month": 6, "cpi": 31.63, "taxPct": 350.6, "value": "65-06", "label": "65年06月(350.6%)"}, {"year": 65, "month": 7, "cpi": 31.77, "taxPct": 349.1, "value": "65-07", "label": "65年07月(349.1%)"}, {"year": 65, "month": 8, "cpi": 32.0, "taxPct": 346.6, "value": "65-08", "label": "65年08月(346.6%)"}, {"year": 65, "month": 9, "cpi": 31.97, "taxPct": 346.9, "value": "65-09", "label": "65年09月(346.9%)"}, {"year": 65, "month": 10, "cpi": 31.8, "taxPct": 348.8, "value": "65-10", "label": "65年10月(348.8%)"}, {"year": 65, "month": 11, "cpi": 31.72, "taxPct": 349.7, "value": "65-11", "label": "65年11月(349.7%)"}, {"year": 65, "month": 12, "cpi": 32.06, "taxPct": 345.9, "value": "65-12", "label": "65年12月(345.9%)"}, {"year": 66, "month": 1, "cpi": 32.49, "taxPct": 341.4, "value": "66-01", "label": "66年01月(341.4%)"}, {"year": 66, "month": 2, "cpi": 33.01, "taxPct": 336.0, "value": "66-02", "label": "66年02月(336.0%)"}, {"year": 66, "month": 3, "cpi": 32.89, "taxPct": 337.2, "value": "66-03", "label": "66年03月(337.2%)"}, {"year": 66, "month": 4, "cpi": 33.14, "taxPct": 334.7, "value": "66-04", "label": "66年04月(334.7%)"}, {"year": 66, "month": 5, "cpi": 33.28, "taxPct": 333.3, "value": "66-05", "label": "66年05月(333.3%)"}, {"year": 66, "month": 6, "cpi": 34.33, "taxPct": 323.1, "value": "66-06", "label": "66年06月(323.1%)"}, {"year": 66, "month": 7, "cpi": 34.36, "taxPct": 322.8, "value": "66-07", "label": "66年07月(322.8%)"}, {"year": 66, "month": 8, "cpi": 35.88, "taxPct": 309.1, "value": "66-08", "label": "66年08月(309.1%)"}, {"year": 66, "month": 9, "cpi": 35.38, "taxPct": 313.5, "value": "66-09", "label": "66年09月(313.5%)"}, {"year": 66, "month": 10, "cpi": 35.0, "taxPct": 316.9, "value": "66-10", "label": "66年10月(316.9%)"}, {"year": 66, "month": 11, "cpi": 34.4, "taxPct": 322.4, "value": "66-11", "label": "66年11月(322.4%)"}, {"year": 66, "month": 12, "cpi": 34.23, "taxPct": 324.0, "value": "66-12", "label": "66年12月(324.0%)"}, {"year": 67, "month": 1, "cpi": 34.82, "taxPct": 318.5, "value": "67-01", "label": "67年01月(318.5%)"}, {"year": 67, "month": 2, "cpi": 35.08, "taxPct": 316.2, "value": "67-02", "label": "67年02月(316.2%)"}, {"year": 67, "month": 3, "cpi": 35.12, "taxPct": 315.8, "value": "67-03", "label": "67年03月(315.8%)"}, {"year": 67, "month": 4, "cpi": 35.77, "taxPct": 310.1, "value": "67-04", "label": "67年04月(310.1%)"}, {"year": 67, "month": 5, "cpi": 35.75, "taxPct": 310.2, "value": "67-05", "label": "67年05月(310.2%)"}, {"year": 67, "month": 6, "cpi": 35.72, "taxPct": 310.5, "value": "67-06", "label": "67年06月(310.5%)"}, {"year": 67, "month": 7, "cpi": 35.62, "taxPct": 311.4, "value": "67-07", "label": "67年07月(311.4%)"}, {"year": 67, "month": 8, "cpi": 36.27, "taxPct": 305.8, "value": "67-08", "label": "67年08月(305.8%)"}, {"year": 67, "month": 9, "cpi": 36.83, "taxPct": 301.1, "value": "67-09", "label": "67年09月(301.1%)"}, {"year": 67, "month": 10, "cpi": 37.13, "taxPct": 298.7, "value": "67-10", "label": "67年10月(298.7%)"}, {"year": 67, "month": 11, "cpi": 37.01, "taxPct": 299.7, "value": "67-11", "label": "67年11月(299.7%)"}, {"year": 67, "month": 12, "cpi": 36.85, "taxPct": 301.0, "value": "67-12", "label": "67年12月(301.0%)"}, {"year": 68, "month": 1, "cpi": 36.97, "taxPct": 300.0, "value": "68-01", "label": "68年01月(300.0%)"}, {"year": 68, "month": 2, "cpi": 37.14, "taxPct": 298.6, "value": "68-02", "label": "68年02月(298.6%)"}, {"year": 68, "month": 3, "cpi": 37.65, "taxPct": 294.6, "value": "68-03", "label": "68年03月(294.6%)"}, {"year": 68, "month": 4, "cpi": 38.4, "taxPct": 288.8, "value": "68-04", "label": "68年04月(288.8%)"}, {"year": 68, "month": 5, "cpi": 38.73, "taxPct": 286.4, "value": "68-05", "label": "68年05月(286.4%)"}, {"year": 68, "month": 6, "cpi": 39.13, "taxPct": 283.4, "value": "68-06", "label": "68年06月(283.4%)"}, {"year": 68, "month": 7, "cpi": 39.48, "taxPct": 280.9, "value": "68-07", "label": "68年07月(280.9%)"}, {"year": 68, "month": 8, "cpi": 40.5, "taxPct": 273.9, "value": "68-08", "label": "68年08月(273.9%)"}, {"year": 68, "month": 9, "cpi": 41.82, "taxPct": 265.2, "value": "68-09", "label": "68年09月(265.2%)"}, {"year": 68, "month": 10, "cpi": 41.71, "taxPct": 265.9, "value": "68-10", "label": "68年10月(265.9%)"}, {"year": 68, "month": 11, "cpi": 41.11, "taxPct": 269.8, "value": "68-11", "label": "68年11月(269.8%)"}, {"year": 68, "month": 12, "cpi": 41.46, "taxPct": 267.5, "value": "68-12", "label": "68年12月(267.5%)"}, {"year": 69, "month": 1, "cpi": 43.15, "taxPct": 257.0, "value": "69-01", "label": "69年01月(257.0%)"}, {"year": 69, "month": 2, "cpi": 44.01, "taxPct": 252.0, "value": "69-02", "label": "69年02月(252.0%)"}, {"year": 69, "month": 3, "cpi": 44.25, "taxPct": 250.6, "value": "69-03", "label": "69年03月(250.6%)"}, {"year": 69, "month": 4, "cpi": 44.47, "taxPct": 249.4, "value": "69-04", "label": "69年04月(249.4%)"}, {"year": 69, "month": 5, "cpi": 45.31, "taxPct": 244.8, "value": "69-05", "label": "69年05月(244.8%)"}, {"year": 69, "month": 6, "cpi": 46.52, "taxPct": 238.4, "value": "69-06", "label": "69年06月(238.4%)"}, {"year": 69, "month": 7, "cpi": 46.85, "taxPct": 236.7, "value": "69-07", "label": "69年07月(236.7%)"}, {"year": 69, "month": 8, "cpi": 47.92, "taxPct": 231.4, "value": "69-08", "label": "69年08月(231.4%)"}, {"year": 69, "month": 9, "cpi": 49.77, "taxPct": 222.8, "value": "69-09", "label": "69年09月(222.8%)"}, {"year": 69, "month": 10, "cpi": 50.65, "taxPct": 219.0, "value": "69-10", "label": "69年10月(219.0%)"}, {"year": 69, "month": 11, "cpi": 50.72, "taxPct": 218.7, "value": "69-11", "label": "69年11月(218.7%)"}, {"year": 69, "month": 12, "cpi": 50.66, "taxPct": 218.9, "value": "69-12", "label": "69年12月(218.9%)"}, {"year": 70, "month": 1, "cpi": 52.95, "taxPct": 209.5, "value": "70-01", "label": "70年01月(209.5%)"}, {"year": 70, "month": 2, "cpi": 53.85, "taxPct": 206.0, "value": "70-02", "label": "70年02月(206.0%)"}, {"year": 70, "month": 3, "cpi": 54.09, "taxPct": 205.0, "value": "70-03", "label": "70年03月(205.0%)"}, {"year": 70, "month": 4, "cpi": 54.3, "taxPct": 204.3, "value": "70-04", "label": "70年04月(204.3%)"}, {"year": 70, "month": 5, "cpi": 54.09, "taxPct": 205.0, "value": "70-05", "label": "70年05月(205.0%)"}, {"year": 70, "month": 6, "cpi": 54.61, "taxPct": 203.1, "value": "70-06", "label": "70年06月(203.1%)"}, {"year": 70, "month": 7, "cpi": 54.82, "taxPct": 202.3, "value": "70-07", "label": "70年07月(202.3%)"}, {"year": 70, "month": 8, "cpi": 55.36, "taxPct": 200.3, "value": "70-08", "label": "70年08月(200.3%)"}, {"year": 70, "month": 9, "cpi": 56.02, "taxPct": 198.0, "value": "70-09", "label": "70年09月(198.0%)"}, {"year": 70, "month": 10, "cpi": 55.71, "taxPct": 199.1, "value": "70-10", "label": "70年10月(199.1%)"}, {"year": 70, "month": 11, "cpi": 55.34, "taxPct": 200.4, "value": "70-11", "label": "70年11月(200.4%)"}, {"year": 70, "month": 12, "cpi": 55.26, "taxPct": 200.7, "value": "70-12", "label": "70年12月(200.7%)"}, {"year": 71, "month": 1, "cpi": 55.62, "taxPct": 199.4, "value": "71-01", "label": "71年01月(199.4%)"}, {"year": 71, "month": 2, "cpi": 55.44, "taxPct": 200.1, "value": "71-02", "label": "71年02月(200.1%)"}, {"year": 71, "month": 3, "cpi": 55.59, "taxPct": 199.5, "value": "71-03", "label": "71年03月(199.5%)"}, {"year": 71, "month": 4, "cpi": 55.73, "taxPct": 199.0, "value": "71-04", "label": "71年04月(199.0%)"}, {"year": 71, "month": 5, "cpi": 56.07, "taxPct": 197.8, "value": "71-05", "label": "71年05月(197.8%)"}, {"year": 71, "month": 6, "cpi": 56.18, "taxPct": 197.4, "value": "71-06", "label": "71年06月(197.4%)"}, {"year": 71, "month": 7, "cpi": 56.15, "taxPct": 197.5, "value": "71-07", "label": "71年07月(197.5%)"}, {"year": 71, "month": 8, "cpi": 57.85, "taxPct": 191.7, "value": "71-08", "label": "71年08月(191.7%)"}, {"year": 71, "month": 9, "cpi": 57.31, "taxPct": 193.5, "value": "71-09", "label": "71年09月(193.5%)"}, {"year": 71, "month": 10, "cpi": 56.85, "taxPct": 195.1, "value": "71-10", "label": "71年10月(195.1%)"}, {"year": 71, "month": 11, "cpi": 56.39, "taxPct": 196.7, "value": "71-11", "label": "71年11月(196.7%)"}, {"year": 71, "month": 12, "cpi": 56.6, "taxPct": 196.0, "value": "71-12", "label": "71年12月(196.0%)"}, {"year": 72, "month": 1, "cpi": 56.62, "taxPct": 195.9, "value": "72-01", "label": "72年01月(195.9%)"}, {"year": 72, "month": 2, "cpi": 57.19, "taxPct": 193.9, "value": "72-02", "label": "72年02月(193.9%)"}, {"year": 72, "month": 3, "cpi": 57.43, "taxPct": 193.1, "value": "72-03", "label": "72年03月(193.1%)"}, {"year": 72, "month": 4, "cpi": 57.68, "taxPct": 192.3, "value": "72-04", "label": "72年04月(192.3%)"}, {"year": 72, "month": 5, "cpi": 57.28, "taxPct": 193.6, "value": "72-05", "label": "72年05月(193.6%)"}, {"year": 72, "month": 6, "cpi": 57.71, "taxPct": 192.2, "value": "72-06", "label": "72年06月(192.2%)"}, {"year": 72, "month": 7, "cpi": 57.06, "taxPct": 194.4, "value": "72-07", "label": "72年07月(194.4%)"}, {"year": 72, "month": 8, "cpi": 57.03, "taxPct": 194.5, "value": "72-08", "label": "72年08月(194.5%)"}, {"year": 72, "month": 9, "cpi": 57.21, "taxPct": 193.9, "value": "72-09", "label": "72年09月(193.9%)"}, {"year": 72, "month": 10, "cpi": 57.19, "taxPct": 193.9, "value": "72-10", "label": "72年10月(193.9%)"}, {"year": 72, "month": 11, "cpi": 56.71, "taxPct": 195.6, "value": "72-11", "label": "72年11月(195.6%)"}, {"year": 72, "month": 12, "cpi": 55.93, "taxPct": 198.3, "value": "72-12", "label": "72年12月(198.3%)"}, {"year": 73, "month": 1, "cpi": 55.97, "taxPct": 198.2, "value": "73-01", "label": "73年01月(198.2%)"}, {"year": 73, "month": 2, "cpi": 56.54, "taxPct": 196.2, "value": "73-02", "label": "73年02月(196.2%)"}, {"year": 73, "month": 3, "cpi": 56.69, "taxPct": 195.6, "value": "73-03", "label": "73年03月(195.6%)"}, {"year": 73, "month": 4, "cpi": 56.8, "taxPct": 195.3, "value": "73-04", "label": "73年04月(195.3%)"}, {"year": 73, "month": 5, "cpi": 57.49, "taxPct": 192.9, "value": "73-05", "label": "73年05月(192.9%)"}, {"year": 73, "month": 6, "cpi": 57.44, "taxPct": 193.1, "value": "73-06", "label": "73年06月(193.1%)"}, {"year": 73, "month": 7, "cpi": 57.28, "taxPct": 193.6, "value": "73-07", "label": "73年07月(193.6%)"}, {"year": 73, "month": 8, "cpi": 57.49, "taxPct": 192.9, "value": "73-08", "label": "73年08月(192.9%)"}, {"year": 73, "month": 9, "cpi": 57.69, "taxPct": 192.3, "value": "73-09", "label": "73年09月(192.3%)"}, {"year": 73, "month": 10, "cpi": 57.46, "taxPct": 193.0, "value": "73-10", "label": "73年10月(193.0%)"}, {"year": 73, "month": 11, "cpi": 57.13, "taxPct": 194.1, "value": "73-11", "label": "73年11月(194.1%)"}, {"year": 73, "month": 12, "cpi": 56.85, "taxPct": 195.1, "value": "73-12", "label": "73年12月(195.1%)"}, {"year": 74, "month": 1, "cpi": 56.88, "taxPct": 195.0, "value": "74-01", "label": "74年01月(195.0%)"}, {"year": 74, "month": 2, "cpi": 57.33, "taxPct": 193.5, "value": "74-02", "label": "74年02月(193.5%)"}, {"year": 74, "month": 3, "cpi": 57.36, "taxPct": 193.4, "value": "74-03", "label": "74年03月(193.4%)"}, {"year": 74, "month": 4, "cpi": 57.08, "taxPct": 194.3, "value": "74-04", "label": "74年04月(194.3%)"}, {"year": 74, "month": 5, "cpi": 56.9, "taxPct": 194.9, "value": "74-05", "label": "74年05月(194.9%)"}, {"year": 74, "month": 6, "cpi": 56.81, "taxPct": 195.2, "value": "74-06", "label": "74年06月(195.2%)"}, {"year": 74, "month": 7, "cpi": 56.87, "taxPct": 195.0, "value": "74-07", "label": "74年07月(195.0%)"}, {"year": 74, "month": 8, "cpi": 56.62, "taxPct": 195.9, "value": "74-08", "label": "74年08月(195.9%)"}, {"year": 74, "month": 9, "cpi": 57.56, "taxPct": 192.7, "value": "74-09", "label": "74年09月(192.7%)"}, {"year": 74, "month": 10, "cpi": 57.5, "taxPct": 192.9, "value": "74-10", "label": "74年10月(192.9%)"}, {"year": 74, "month": 11, "cpi": 56.7, "taxPct": 195.6, "value": "74-11", "label": "74年11月(195.6%)"}, {"year": 74, "month": 12, "cpi": 56.11, "taxPct": 197.7, "value": "74-12", "label": "74年12月(197.7%)"}, {"year": 75, "month": 1, "cpi": 56.64, "taxPct": 195.8, "value": "75-01", "label": "75年01月(195.8%)"}, {"year": 75, "month": 2, "cpi": 56.8, "taxPct": 195.3, "value": "75-02", "label": "75年02月(195.3%)"}, {"year": 75, "month": 3, "cpi": 56.79, "taxPct": 195.3, "value": "75-03", "label": "75年03月(195.3%)"}, {"year": 75, "month": 4, "cpi": 56.93, "taxPct": 194.8, "value": "75-04", "label": "75年04月(194.8%)"}, {"year": 75, "month": 5, "cpi": 57.01, "taxPct": 194.5, "value": "75-05", "label": "75年05月(194.5%)"}, {"year": 75, "month": 6, "cpi": 57.15, "taxPct": 194.1, "value": "75-06", "label": "75年06月(194.1%)"}, {"year": 75, "month": 7, "cpi": 57.01, "taxPct": 194.5, "value": "75-07", "label": "75年07月(194.5%)"}, {"year": 75, "month": 8, "cpi": 57.32, "taxPct": 193.5, "value": "75-08", "label": "75年08月(193.5%)"}, {"year": 75, "month": 9, "cpi": 58.78, "taxPct": 188.7, "value": "75-09", "label": "75年09月(188.7%)"}, {"year": 75, "month": 10, "cpi": 58.65, "taxPct": 189.1, "value": "75-10", "label": "75年10月(189.1%)"}, {"year": 75, "month": 11, "cpi": 57.84, "taxPct": 191.8, "value": "75-11", "label": "75年11月(191.8%)"}, {"year": 75, "month": 12, "cpi": 57.58, "taxPct": 192.6, "value": "75-12", "label": "75年12月(192.6%)"}, {"year": 76, "month": 1, "cpi": 57.43, "taxPct": 193.1, "value": "76-01", "label": "76年01月(193.1%)"}, {"year": 76, "month": 2, "cpi": 57.31, "taxPct": 193.5, "value": "76-02", "label": "76年02月(193.5%)"}, {"year": 76, "month": 3, "cpi": 56.86, "taxPct": 195.1, "value": "76-03", "label": "76年03月(195.1%)"}, {"year": 76, "month": 4, "cpi": 57.06, "taxPct": 194.4, "value": "76-04", "label": "76年04月(194.4%)"}, {"year": 76, "month": 5, "cpi": 57.07, "taxPct": 194.3, "value": "76-05", "label": "76年05月(194.3%)"}, {"year": 76, "month": 6, "cpi": 57.11, "taxPct": 194.2, "value": "76-06", "label": "76年06月(194.2%)"}, {"year": 76, "month": 7, "cpi": 57.77, "taxPct": 192.0, "value": "76-07", "label": "76年07月(192.0%)"}, {"year": 76, "month": 8, "cpi": 58.24, "taxPct": 190.4, "value": "76-08", "label": "76年08月(190.4%)"}, {"year": 76, "month": 9, "cpi": 58.45, "taxPct": 189.8, "value": "76-09", "label": "76年09月(189.8%)"}, {"year": 76, "month": 10, "cpi": 57.93, "taxPct": 191.5, "value": "76-10", "label": "76年10月(191.5%)"}, {"year": 76, "month": 11, "cpi": 58.09, "taxPct": 190.9, "value": "76-11", "label": "76年11月(190.9%)"}, {"year": 76, "month": 12, "cpi": 58.69, "taxPct": 189.0, "value": "76-12", "label": "76年12月(189.0%)"}, {"year": 77, "month": 1, "cpi": 57.74, "taxPct": 192.1, "value": "77-01", "label": "77年01月(192.1%)"}, {"year": 77, "month": 2, "cpi": 57.51, "taxPct": 192.9, "value": "77-02", "label": "77年02月(192.9%)"}, {"year": 77, "month": 3, "cpi": 57.19, "taxPct": 193.9, "value": "77-03", "label": "77年03月(193.9%)"}, {"year": 77, "month": 4, "cpi": 57.26, "taxPct": 193.7, "value": "77-04", "label": "77年04月(193.7%)"}, {"year": 77, "month": 5, "cpi": 57.91, "taxPct": 191.5, "value": "77-05", "label": "77年05月(191.5%)"}, {"year": 77, "month": 6, "cpi": 58.26, "taxPct": 190.4, "value": "77-06", "label": "77年06月(190.4%)"}, {"year": 77, "month": 7, "cpi": 58.26, "taxPct": 190.4, "value": "77-07", "label": "77年07月(190.4%)"}, {"year": 77, "month": 8, "cpi": 59.09, "taxPct": 187.7, "value": "77-08", "label": "77年08月(187.7%)"}, {"year": 77, "month": 9, "cpi": 59.28, "taxPct": 187.1, "value": "77-09", "label": "77年09月(187.1%)"}, {"year": 77, "month": 10, "cpi": 59.7, "taxPct": 185.8, "value": "77-10", "label": "77年10月(185.8%)"}, {"year": 77, "month": 11, "cpi": 59.39, "taxPct": 186.7, "value": "77-11", "label": "77年11月(186.7%)"}, {"year": 77, "month": 12, "cpi": 59.34, "taxPct": 186.9, "value": "77-12", "label": "77年12月(186.9%)"}, {"year": 78, "month": 1, "cpi": 59.34, "taxPct": 186.9, "value": "78-01", "label": "78年01月(186.9%)"}, {"year": 78, "month": 2, "cpi": 59.86, "taxPct": 185.3, "value": "78-02", "label": "78年02月(185.3%)"}, {"year": 78, "month": 3, "cpi": 60.01, "taxPct": 184.8, "value": "78-03", "label": "78年03月(184.8%)"}, {"year": 78, "month": 4, "cpi": 60.54, "taxPct": 183.2, "value": "78-04", "label": "78年04月(183.2%)"}, {"year": 78, "month": 5, "cpi": 60.99, "taxPct": 181.8, "value": "78-05", "label": "78年05月(181.8%)"}, {"year": 78, "month": 6, "cpi": 60.83, "taxPct": 182.3, "value": "78-06", "label": "78年06月(182.3%)"}, {"year": 78, "month": 7, "cpi": 60.54, "taxPct": 183.2, "value": "78-07", "label": "78年07月(183.2%)"}, {"year": 78, "month": 8, "cpi": 61.05, "taxPct": 181.7, "value": "78-08", "label": "78年08月(181.7%)"}, {"year": 78, "month": 9, "cpi": 62.65, "taxPct": 177.0, "value": "78-09", "label": "78年09月(177.0%)"}, {"year": 78, "month": 10, "cpi": 63.25, "taxPct": 175.4, "value": "78-10", "label": "78年10月(175.4%)"}, {"year": 78, "month": 11, "cpi": 61.62, "taxPct": 180.0, "value": "78-11", "label": "78年11月(180.0%)"}, {"year": 78, "month": 12, "cpi": 61.2, "taxPct": 181.2, "value": "78-12", "label": "78年12月(181.2%)"}, {"year": 79, "month": 1, "cpi": 61.63, "taxPct": 180.0, "value": "79-01", "label": "79年01月(180.0%)"}, {"year": 79, "month": 2, "cpi": 61.54, "taxPct": 180.2, "value": "79-02", "label": "79年02月(180.2%)"}, {"year": 79, "month": 3, "cpi": 62.0, "taxPct": 178.9, "value": "79-03", "label": "79年03月(178.9%)"}, {"year": 79, "month": 4, "cpi": 62.61, "taxPct": 177.1, "value": "79-04", "label": "79年04月(177.1%)"}, {"year": 79, "month": 5, "cpi": 63.27, "taxPct": 175.3, "value": "79-05", "label": "79年05月(175.3%)"}, {"year": 79, "month": 6, "cpi": 63.03, "taxPct": 176.0, "value": "79-06", "label": "79年06月(176.0%)"}, {"year": 79, "month": 7, "cpi": 63.45, "taxPct": 174.8, "value": "79-07", "label": "79年07月(174.8%)"}, {"year": 79, "month": 8, "cpi": 64.5, "taxPct": 172.0, "value": "79-08", "label": "79年08月(172.0%)"}, {"year": 79, "month": 9, "cpi": 66.74, "taxPct": 166.2, "value": "79-09", "label": "79年09月(166.2%)"}, {"year": 79, "month": 10, "cpi": 65.3, "taxPct": 169.8, "value": "79-10", "label": "79年10月(169.8%)"}, {"year": 79, "month": 11, "cpi": 64.04, "taxPct": 173.2, "value": "79-11", "label": "79年11月(173.2%)"}, {"year": 79, "month": 12, "cpi": 63.99, "taxPct": 173.3, "value": "79-12", "label": "79年12月(173.3%)"}, {"year": 80, "month": 1, "cpi": 64.7, "taxPct": 171.4, "value": "80-01", "label": "80年01月(171.4%)"}, {"year": 80, "month": 2, "cpi": 65.09, "taxPct": 170.4, "value": "80-02", "label": "80年02月(170.4%)"}, {"year": 80, "month": 3, "cpi": 64.77, "taxPct": 171.2, "value": "80-03", "label": "80年03月(171.2%)"}, {"year": 80, "month": 4, "cpi": 65.19, "taxPct": 170.1, "value": "80-04", "label": "80年04月(170.1%)"}, {"year": 80, "month": 5, "cpi": 65.41, "taxPct": 169.6, "value": "80-05", "label": "80年05月(169.6%)"}, {"year": 80, "month": 6, "cpi": 65.57, "taxPct": 169.1, "value": "80-06", "label": "80年06月(169.1%)"}, {"year": 80, "month": 7, "cpi": 66.02, "taxPct": 168.0, "value": "80-07", "label": "80年07月(168.0%)"}, {"year": 80, "month": 8, "cpi": 66.17, "taxPct": 167.6, "value": "80-08", "label": "80年08月(167.6%)"}, {"year": 80, "month": 9, "cpi": 66.27, "taxPct": 167.4, "value": "80-09", "label": "80年09月(167.4%)"}, {"year": 80, "month": 10, "cpi": 66.92, "taxPct": 165.7, "value": "80-10", "label": "80年10月(165.7%)"}, {"year": 80, "month": 11, "cpi": 67.12, "taxPct": 165.2, "value": "80-11", "label": "80年11月(165.2%)"}, {"year": 80, "month": 12, "cpi": 66.48, "taxPct": 166.8, "value": "80-12", "label": "80年12月(166.8%)"}, {"year": 81, "month": 1, "cpi": 67.14, "taxPct": 165.2, "value": "81-01", "label": "81年01月(165.2%)"}, {"year": 81, "month": 2, "cpi": 67.73, "taxPct": 163.8, "value": "81-02", "label": "81年02月(163.8%)"}, {"year": 81, "month": 3, "cpi": 67.82, "taxPct": 163.5, "value": "81-03", "label": "81年03月(163.5%)"}, {"year": 81, "month": 4, "cpi": 68.92, "taxPct": 160.9, "value": "81-04", "label": "81年04月(160.9%)"}, {"year": 81, "month": 5, "cpi": 69.15, "taxPct": 160.4, "value": "81-05", "label": "81年05月(160.4%)"}, {"year": 81, "month": 6, "cpi": 68.96, "taxPct": 160.8, "value": "81-06", "label": "81年06月(160.8%)"}, {"year": 81, "month": 7, "cpi": 68.46, "taxPct": 162.0, "value": "81-07", "label": "81年07月(162.0%)"}, {"year": 81, "month": 8, "cpi": 68.15, "taxPct": 162.7, "value": "81-08", "label": "81年08月(162.7%)"}, {"year": 81, "month": 9, "cpi": 70.35, "taxPct": 157.7, "value": "81-09", "label": "81年09月(157.7%)"}, {"year": 81, "month": 10, "cpi": 70.32, "taxPct": 157.7, "value": "81-10", "label": "81年10月(157.7%)"}, {"year": 81, "month": 11, "cpi": 69.2, "taxPct": 160.3, "value": "81-11", "label": "81年11月(160.3%)"}, {"year": 81, "month": 12, "cpi": 68.75, "taxPct": 161.3, "value": "81-12", "label": "81年12月(161.3%)"}, {"year": 82, "month": 1, "cpi": 69.59, "taxPct": 159.4, "value": "82-01", "label": "82年01月(159.4%)"}, {"year": 82, "month": 2, "cpi": 69.8, "taxPct": 158.9, "value": "82-02", "label": "82年02月(158.9%)"}, {"year": 82, "month": 3, "cpi": 70.02, "taxPct": 158.4, "value": "82-03", "label": "82年03月(158.4%)"}, {"year": 82, "month": 4, "cpi": 70.83, "taxPct": 156.6, "value": "82-04", "label": "82年04月(156.6%)"}, {"year": 82, "month": 5, "cpi": 70.59, "taxPct": 157.1, "value": "82-05", "label": "82年05月(157.1%)"}, {"year": 82, "month": 6, "cpi": 71.96, "taxPct": 154.1, "value": "82-06", "label": "82年06月(154.1%)"}, {"year": 82, "month": 7, "cpi": 70.71, "taxPct": 156.9, "value": "82-07", "label": "82年07月(156.9%)"}, {"year": 82, "month": 8, "cpi": 70.42, "taxPct": 157.5, "value": "82-08", "label": "82年08月(157.5%)"}, {"year": 82, "month": 9, "cpi": 70.87, "taxPct": 156.5, "value": "82-09", "label": "82年09月(156.5%)"}, {"year": 82, "month": 10, "cpi": 71.18, "taxPct": 155.8, "value": "82-10", "label": "82年10月(155.8%)"}, {"year": 82, "month": 11, "cpi": 71.34, "taxPct": 155.5, "value": "82-11", "label": "82年11月(155.5%)"}, {"year": 82, "month": 12, "cpi": 71.93, "taxPct": 154.2, "value": "82-12", "label": "82年12月(154.2%)"}, {"year": 83, "month": 1, "cpi": 71.61, "taxPct": 154.9, "value": "83-01", "label": "83年01月(154.9%)"}, {"year": 83, "month": 2, "cpi": 72.54, "taxPct": 152.9, "value": "83-02", "label": "83年02月(152.9%)"}, {"year": 83, "month": 3, "cpi": 72.34, "taxPct": 153.3, "value": "83-03", "label": "83年03月(153.3%)"}, {"year": 83, "month": 4, "cpi": 73.0, "taxPct": 151.9, "value": "83-04", "label": "83年04月(151.9%)"}, {"year": 83, "month": 5, "cpi": 73.68, "taxPct": 150.5, "value": "83-05", "label": "83年05月(150.5%)"}, {"year": 83, "month": 6, "cpi": 73.49, "taxPct": 150.9, "value": "83-06", "label": "83年06月(150.9%)"}, {"year": 83, "month": 7, "cpi": 73.65, "taxPct": 150.6, "value": "83-07", "label": "83年07月(150.6%)"}, {"year": 83, "month": 8, "cpi": 75.38, "taxPct": 147.1, "value": "83-08", "label": "83年08月(147.1%)"}, {"year": 83, "month": 9, "cpi": 75.61, "taxPct": 146.7, "value": "83-09", "label": "83年09月(146.7%)"}, {"year": 83, "month": 10, "cpi": 74.79, "taxPct": 148.3, "value": "83-10", "label": "83年10月(148.3%)"}, {"year": 83, "month": 11, "cpi": 74.11, "taxPct": 149.7, "value": "83-11", "label": "83年11月(149.7%)"}, {"year": 83, "month": 12, "cpi": 73.84, "taxPct": 150.2, "value": "83-12", "label": "83年12月(150.2%)"}, {"year": 84, "month": 1, "cpi": 75.36, "taxPct": 147.2, "value": "84-01", "label": "84年01月(147.2%)"}, {"year": 84, "month": 2, "cpi": 75.04, "taxPct": 147.8, "value": "84-02", "label": "84年02月(147.8%)"}, {"year": 84, "month": 3, "cpi": 75.14, "taxPct": 147.6, "value": "84-03", "label": "84年03月(147.6%)"}, {"year": 84, "month": 4, "cpi": 76.24, "taxPct": 145.5, "value": "84-04", "label": "84年04月(145.5%)"}, {"year": 84, "month": 5, "cpi": 76.1, "taxPct": 145.7, "value": "84-05", "label": "84年05月(145.7%)"}, {"year": 84, "month": 6, "cpi": 76.92, "taxPct": 144.2, "value": "84-06", "label": "84年06月(144.2%)"}, {"year": 84, "month": 7, "cpi": 76.47, "taxPct": 145.0, "value": "84-07", "label": "84年07月(145.0%)"}, {"year": 84, "month": 8, "cpi": 76.67, "taxPct": 144.7, "value": "84-08", "label": "84年08月(144.7%)"}, {"year": 84, "month": 9, "cpi": 77.13, "taxPct": 143.8, "value": "84-09", "label": "84年09月(143.8%)"}, {"year": 84, "month": 10, "cpi": 76.93, "taxPct": 144.2, "value": "84-10", "label": "84年10月(144.2%)"}, {"year": 84, "month": 11, "cpi": 77.24, "taxPct": 143.6, "value": "84-11", "label": "84年11月(143.6%)"}, {"year": 84, "month": 12, "cpi": 77.21, "taxPct": 143.6, "value": "84-12", "label": "84年12月(143.6%)"}, {"year": 85, "month": 1, "cpi": 77.09, "taxPct": 143.9, "value": "85-01", "label": "85年01月(143.9%)"}, {"year": 85, "month": 2, "cpi": 77.85, "taxPct": 142.5, "value": "85-02", "label": "85年02月(142.5%)"}, {"year": 85, "month": 3, "cpi": 77.4, "taxPct": 143.3, "value": "85-03", "label": "85年03月(143.3%)"}, {"year": 85, "month": 4, "cpi": 78.39, "taxPct": 141.5, "value": "85-04", "label": "85年04月(141.5%)"}, {"year": 85, "month": 5, "cpi": 78.3, "taxPct": 141.6, "value": "85-05", "label": "85年05月(141.6%)"}, {"year": 85, "month": 6, "cpi": 78.76, "taxPct": 140.8, "value": "85-06", "label": "85年06月(140.8%)"}, {"year": 85, "month": 7, "cpi": 77.59, "taxPct": 142.9, "value": "85-07", "label": "85年07月(142.9%)"}, {"year": 85, "month": 8, "cpi": 80.54, "taxPct": 137.7, "value": "85-08", "label": "85年08月(137.7%)"}, {"year": 85, "month": 9, "cpi": 80.09, "taxPct": 138.5, "value": "85-09", "label": "85年09月(138.5%)"}, {"year": 85, "month": 10, "cpi": 79.77, "taxPct": 139.0, "value": "85-10", "label": "85年10月(139.0%)"}, {"year": 85, "month": 11, "cpi": 79.71, "taxPct": 139.1, "value": "85-11", "label": "85年11月(139.1%)"}, {"year": 85, "month": 12, "cpi": 79.16, "taxPct": 140.1, "value": "85-12", "label": "85年12月(140.1%)"}, {"year": 86, "month": 1, "cpi": 78.61, "taxPct": 141.1, "value": "86-01", "label": "86年01月(141.1%)"}, {"year": 86, "month": 2, "cpi": 79.46, "taxPct": 139.6, "value": "86-02", "label": "86年02月(139.6%)"}, {"year": 86, "month": 3, "cpi": 78.25, "taxPct": 141.7, "value": "86-03", "label": "86年03月(141.7%)"}, {"year": 86, "month": 4, "cpi": 78.78, "taxPct": 140.8, "value": "86-04", "label": "86年04月(140.8%)"}, {"year": 86, "month": 5, "cpi": 78.89, "taxPct": 140.6, "value": "86-05", "label": "86年05月(140.6%)"}, {"year": 86, "month": 6, "cpi": 80.2, "taxPct": 138.3, "value": "86-06", "label": "86年06月(138.3%)"}, {"year": 86, "month": 7, "cpi": 80.16, "taxPct": 138.4, "value": "86-07", "label": "86年07月(138.4%)"}, {"year": 86, "month": 8, "cpi": 80.07, "taxPct": 138.5, "value": "86-08", "label": "86年08月(138.5%)"}, {"year": 86, "month": 9, "cpi": 80.6, "taxPct": 137.6, "value": "86-09", "label": "86年09月(137.6%)"}, {"year": 86, "month": 10, "cpi": 79.51, "taxPct": 139.5, "value": "86-10", "label": "86年10月(139.5%)"}, {"year": 86, "month": 11, "cpi": 79.3, "taxPct": 139.9, "value": "86-11", "label": "86年11月(139.9%)"}, {"year": 86, "month": 12, "cpi": 79.37, "taxPct": 139.7, "value": "86-12", "label": "86年12月(139.7%)"}, {"year": 87, "month": 1, "cpi": 80.18, "taxPct": 138.3, "value": "87-01", "label": "87年01月(138.3%)"}, {"year": 87, "month": 2, "cpi": 79.69, "taxPct": 139.2, "value": "87-02", "label": "87年02月(139.2%)"}, {"year": 87, "month": 3, "cpi": 80.18, "taxPct": 138.3, "value": "87-03", "label": "87年03月(138.3%)"}, {"year": 87, "month": 4, "cpi": 80.45, "taxPct": 137.9, "value": "87-04", "label": "87年04月(137.9%)"}, {"year": 87, "month": 5, "cpi": 80.2, "taxPct": 138.3, "value": "87-05", "label": "87年05月(138.3%)"}, {"year": 87, "month": 6, "cpi": 81.36, "taxPct": 136.3, "value": "87-06", "label": "87年06月(136.3%)"}, {"year": 87, "month": 7, "cpi": 80.83, "taxPct": 137.2, "value": "87-07", "label": "87年07月(137.2%)"}, {"year": 87, "month": 8, "cpi": 80.43, "taxPct": 137.9, "value": "87-08", "label": "87年08月(137.9%)"}, {"year": 87, "month": 9, "cpi": 80.92, "taxPct": 137.1, "value": "87-09", "label": "87年09月(137.1%)"}, {"year": 87, "month": 10, "cpi": 81.56, "taxPct": 136.0, "value": "87-10", "label": "87年10月(136.0%)"}, {"year": 87, "month": 11, "cpi": 82.4, "taxPct": 134.6, "value": "87-11", "label": "87年11月(134.6%)"}, {"year": 87, "month": 12, "cpi": 81.05, "taxPct": 136.8, "value": "87-12", "label": "87年12月(136.8%)"}, {"year": 88, "month": 1, "cpi": 80.5, "taxPct": 137.8, "value": "88-01", "label": "88年01月(137.8%)"}, {"year": 88, "month": 2, "cpi": 81.36, "taxPct": 136.3, "value": "88-02", "label": "88年02月(136.3%)"}, {"year": 88, "month": 3, "cpi": 79.81, "taxPct": 139.0, "value": "88-03", "label": "88年03月(139.0%)"}, {"year": 88, "month": 4, "cpi": 80.38, "taxPct": 138.0, "value": "88-04", "label": "88年04月(138.0%)"}, {"year": 88, "month": 5, "cpi": 80.6, "taxPct": 137.6, "value": "88-05", "label": "88年05月(137.6%)"}, {"year": 88, "month": 6, "cpi": 80.67, "taxPct": 137.5, "value": "88-06", "label": "88年06月(137.5%)"}, {"year": 88, "month": 7, "cpi": 80.16, "taxPct": 138.4, "value": "88-07", "label": "88年07月(138.4%)"}, {"year": 88, "month": 8, "cpi": 81.35, "taxPct": 136.3, "value": "88-08", "label": "88年08月(136.3%)"}, {"year": 88, "month": 9, "cpi": 81.39, "taxPct": 136.3, "value": "88-09", "label": "88年09月(136.3%)"}, {"year": 88, "month": 10, "cpi": 81.9, "taxPct": 135.4, "value": "88-10", "label": "88年10月(135.4%)"}, {"year": 88, "month": 11, "cpi": 81.66, "taxPct": 135.8, "value": "88-11", "label": "88年11月(135.8%)"}, {"year": 88, "month": 12, "cpi": 81.17, "taxPct": 136.6, "value": "88-12", "label": "88年12月(136.6%)"}, {"year": 89, "month": 1, "cpi": 80.91, "taxPct": 137.1, "value": "89-01", "label": "89年01月(137.1%)"}, {"year": 89, "month": 2, "cpi": 82.11, "taxPct": 135.1, "value": "89-02", "label": "89年02月(135.1%)"}, {"year": 89, "month": 3, "cpi": 80.7, "taxPct": 137.4, "value": "89-03", "label": "89年03月(137.4%)"}, {"year": 89, "month": 4, "cpi": 81.37, "taxPct": 136.3, "value": "89-04", "label": "89年04月(136.3%)"}, {"year": 89, "month": 5, "cpi": 81.88, "taxPct": 135.5, "value": "89-05", "label": "89年05月(135.5%)"}, {"year": 89, "month": 6, "cpi": 81.77, "taxPct": 135.6, "value": "89-06", "label": "89年06月(135.6%)"}, {"year": 89, "month": 7, "cpi": 81.32, "taxPct": 136.4, "value": "89-07", "label": "89年07月(136.4%)"}, {"year": 89, "month": 8, "cpi": 81.57, "taxPct": 136.0, "value": "89-08", "label": "89年08月(136.0%)"}, {"year": 89, "month": 9, "cpi": 82.71, "taxPct": 134.1, "value": "89-09", "label": "89年09月(134.1%)"}, {"year": 89, "month": 10, "cpi": 82.73, "taxPct": 134.1, "value": "89-10", "label": "89年10月(134.1%)"}, {"year": 89, "month": 11, "cpi": 83.5, "taxPct": 132.8, "value": "89-11", "label": "89年11月(132.8%)"}, {"year": 89, "month": 12, "cpi": 82.5, "taxPct": 134.4, "value": "89-12", "label": "89年12月(134.4%)"}, {"year": 90, "month": 1, "cpi": 82.82, "taxPct": 133.9, "value": "90-01", "label": "90年01月(133.9%)"}, {"year": 90, "month": 2, "cpi": 81.27, "taxPct": 136.5, "value": "90-02", "label": "90年02月(136.5%)"}, {"year": 90, "month": 3, "cpi": 81.05, "taxPct": 136.8, "value": "90-03", "label": "90年03月(136.8%)"}, {"year": 90, "month": 4, "cpi": 81.72, "taxPct": 135.7, "value": "90-04", "label": "90年04月(135.7%)"}, {"year": 90, "month": 5, "cpi": 81.7, "taxPct": 135.8, "value": "90-05", "label": "90年05月(135.8%)"}, {"year": 90, "month": 6, "cpi": 81.65, "taxPct": 135.8, "value": "90-06", "label": "90年06月(135.8%)"}, {"year": 90, "month": 7, "cpi": 81.4, "taxPct": 136.3, "value": "90-07", "label": "90年07月(136.3%)"}, {"year": 90, "month": 8, "cpi": 81.94, "taxPct": 135.4, "value": "90-08", "label": "90年08月(135.4%)"}, {"year": 90, "month": 9, "cpi": 82.29, "taxPct": 134.8, "value": "90-09", "label": "90年09月(134.8%)"}, {"year": 90, "month": 10, "cpi": 83.54, "taxPct": 132.8, "value": "90-10", "label": "90年10月(132.8%)"}, {"year": 90, "month": 11, "cpi": 82.55, "taxPct": 134.4, "value": "90-11", "label": "90年11月(134.4%)"}, {"year": 90, "month": 12, "cpi": 81.11, "taxPct": 136.7, "value": "90-12", "label": "90年12月(136.7%)"}, {"year": 91, "month": 1, "cpi": 81.43, "taxPct": 136.2, "value": "91-01", "label": "91年01月(136.2%)"}, {"year": 91, "month": 2, "cpi": 82.42, "taxPct": 134.6, "value": "91-02", "label": "91年02月(134.6%)"}, {"year": 91, "month": 3, "cpi": 81.06, "taxPct": 136.8, "value": "91-03", "label": "91年03月(136.8%)"}, {"year": 91, "month": 4, "cpi": 81.89, "taxPct": 135.4, "value": "91-04", "label": "91年04月(135.4%)"}, {"year": 91, "month": 5, "cpi": 81.49, "taxPct": 136.1, "value": "91-05", "label": "91年05月(136.1%)"}, {"year": 91, "month": 6, "cpi": 81.74, "taxPct": 135.7, "value": "91-06", "label": "91年06月(135.7%)"}, {"year": 91, "month": 7, "cpi": 81.75, "taxPct": 135.7, "value": "91-07", "label": "91年07月(135.7%)"}, {"year": 91, "month": 8, "cpi": 81.72, "taxPct": 135.7, "value": "91-08", "label": "91年08月(135.7%)"}, {"year": 91, "month": 9, "cpi": 81.66, "taxPct": 135.8, "value": "91-09", "label": "91年09月(135.8%)"}, {"year": 91, "month": 10, "cpi": 82.12, "taxPct": 135.1, "value": "91-10", "label": "91年10月(135.1%)"}, {"year": 91, "month": 11, "cpi": 82.09, "taxPct": 135.1, "value": "91-11", "label": "91年11月(135.1%)"}, {"year": 91, "month": 12, "cpi": 81.74, "taxPct": 135.7, "value": "91-12", "label": "91年12月(135.7%)"}, {"year": 92, "month": 1, "cpi": 82.31, "taxPct": 134.7, "value": "92-01", "label": "92年01月(134.7%)"}, {"year": 92, "month": 2, "cpi": 81.17, "taxPct": 136.6, "value": "92-02", "label": "92年02月(136.6%)"}, {"year": 92, "month": 3, "cpi": 80.91, "taxPct": 137.1, "value": "92-03", "label": "92年03月(137.1%)"}, {"year": 92, "month": 4, "cpi": 81.79, "taxPct": 135.6, "value": "92-04", "label": "92年04月(135.6%)"}, {"year": 92, "month": 5, "cpi": 81.75, "taxPct": 135.7, "value": "92-05", "label": "92年05月(135.7%)"}, {"year": 92, "month": 6, "cpi": 81.28, "taxPct": 136.5, "value": "92-06", "label": "92年06月(136.5%)"}, {"year": 92, "month": 7, "cpi": 80.94, "taxPct": 137.0, "value": "92-07", "label": "92年07月(137.0%)"}, {"year": 92, "month": 8, "cpi": 81.24, "taxPct": 136.5, "value": "92-08", "label": "92年08月(136.5%)"}, {"year": 92, "month": 9, "cpi": 81.49, "taxPct": 136.1, "value": "92-09", "label": "92年09月(136.1%)"}, {"year": 92, "month": 10, "cpi": 82.07, "taxPct": 135.1, "value": "92-10", "label": "92年10月(135.1%)"}, {"year": 92, "month": 11, "cpi": 81.71, "taxPct": 135.7, "value": "92-11", "label": "92年11月(135.7%)"}, {"year": 92, "month": 12, "cpi": 81.69, "taxPct": 135.8, "value": "92-12", "label": "92年12月(135.8%)"}, {"year": 93, "month": 1, "cpi": 82.32, "taxPct": 134.7, "value": "93-01", "label": "93年01月(134.7%)"}, {"year": 93, "month": 2, "cpi": 81.69, "taxPct": 135.8, "value": "93-02", "label": "93年02月(135.8%)"}, {"year": 93, "month": 3, "cpi": 81.63, "taxPct": 135.9, "value": "93-03", "label": "93年03月(135.9%)"}, {"year": 93, "month": 4, "cpi": 82.57, "taxPct": 134.3, "value": "93-04", "label": "93年04月(134.3%)"}, {"year": 93, "month": 5, "cpi": 82.49, "taxPct": 134.5, "value": "93-05", "label": "93年05月(134.5%)"}, {"year": 93, "month": 6, "cpi": 82.69, "taxPct": 134.1, "value": "93-06", "label": "93年06月(134.1%)"}, {"year": 93, "month": 7, "cpi": 83.63, "taxPct": 132.6, "value": "93-07", "label": "93年07月(132.6%)"}, {"year": 93, "month": 8, "cpi": 83.31, "taxPct": 133.1, "value": "93-08", "label": "93年08月(133.1%)"}, {"year": 93, "month": 9, "cpi": 83.76, "taxPct": 132.4, "value": "93-09", "label": "93年09月(132.4%)"}, {"year": 93, "month": 10, "cpi": 84.03, "taxPct": 132.0, "value": "93-10", "label": "93年10月(132.0%)"}, {"year": 93, "month": 11, "cpi": 82.95, "taxPct": 133.7, "value": "93-11", "label": "93年11月(133.7%)"}, {"year": 93, "month": 12, "cpi": 83.01, "taxPct": 133.6, "value": "93-12", "label": "93年12月(133.6%)"}, {"year": 94, "month": 1, "cpi": 82.72, "taxPct": 134.1, "value": "94-01", "label": "94年01月(134.1%)"}, {"year": 94, "month": 2, "cpi": 83.27, "taxPct": 133.2, "value": "94-02", "label": "94年02月(133.2%)"}, {"year": 94, "month": 3, "cpi": 83.51, "taxPct": 132.8, "value": "94-03", "label": "94年03月(132.8%)"}, {"year": 94, "month": 4, "cpi": 83.93, "taxPct": 132.1, "value": "94-04", "label": "94年04月(132.1%)"}, {"year": 94, "month": 5, "cpi": 84.39, "taxPct": 131.4, "value": "94-05", "label": "94年05月(131.4%)"}, {"year": 94, "month": 6, "cpi": 84.66, "taxPct": 131.0, "value": "94-06", "label": "94年06月(131.0%)"}, {"year": 94, "month": 7, "cpi": 85.65, "taxPct": 129.5, "value": "94-07", "label": "94年07月(129.5%)"}, {"year": 94, "month": 8, "cpi": 86.28, "taxPct": 128.5, "value": "94-08", "label": "94年08月(128.5%)"}, {"year": 94, "month": 9, "cpi": 86.41, "taxPct": 128.4, "value": "94-09", "label": "94年09月(128.4%)"}, {"year": 94, "month": 10, "cpi": 86.34, "taxPct": 128.5, "value": "94-10", "label": "94年10月(128.5%)"}, {"year": 94, "month": 11, "cpi": 85.03, "taxPct": 130.4, "value": "94-11", "label": "94年11月(130.4%)"}, {"year": 94, "month": 12, "cpi": 84.84, "taxPct": 130.7, "value": "94-12", "label": "94年12月(130.7%)"}, {"year": 95, "month": 1, "cpi": 84.94, "taxPct": 130.6, "value": "95-01", "label": "95年01月(130.6%)"}, {"year": 95, "month": 2, "cpi": 84.09, "taxPct": 131.9, "value": "95-02", "label": "95年02月(131.9%)"}, {"year": 95, "month": 3, "cpi": 83.86, "taxPct": 132.3, "value": "95-03", "label": "95年03月(132.3%)"}, {"year": 95, "month": 4, "cpi": 84.96, "taxPct": 130.5, "value": "95-04", "label": "95年04月(130.5%)"}, {"year": 95, "month": 5, "cpi": 85.73, "taxPct": 129.4, "value": "95-05", "label": "95年05月(129.4%)"}, {"year": 95, "month": 6, "cpi": 86.13, "taxPct": 128.8, "value": "95-06", "label": "95年06月(128.8%)"}, {"year": 95, "month": 7, "cpi": 86.32, "taxPct": 128.5, "value": "95-07", "label": "95年07月(128.5%)"}, {"year": 95, "month": 8, "cpi": 85.8, "taxPct": 129.3, "value": "95-08", "label": "95年08月(129.3%)"}, {"year": 95, "month": 9, "cpi": 85.33, "taxPct": 130.0, "value": "95-09", "label": "95年09月(130.0%)"}, {"year": 95, "month": 10, "cpi": 85.31, "taxPct": 130.0, "value": "95-10", "label": "95年10月(130.0%)"}, {"year": 95, "month": 11, "cpi": 85.24, "taxPct": 130.1, "value": "95-11", "label": "95年11月(130.1%)"}, {"year": 95, "month": 12, "cpi": 85.42, "taxPct": 129.8, "value": "95-12", "label": "95年12月(129.8%)"}, {"year": 96, "month": 1, "cpi": 85.24, "taxPct": 130.1, "value": "96-01", "label": "96年01月(130.1%)"}, {"year": 96, "month": 2, "cpi": 85.56, "taxPct": 129.6, "value": "96-02", "label": "96年02月(129.6%)"}, {"year": 96, "month": 3, "cpi": 84.56, "taxPct": 131.2, "value": "96-03", "label": "96年03月(131.2%)"}, {"year": 96, "month": 4, "cpi": 85.54, "taxPct": 129.7, "value": "96-04", "label": "96年04月(129.7%)"}, {"year": 96, "month": 5, "cpi": 85.71, "taxPct": 129.4, "value": "96-05", "label": "96年05月(129.4%)"}, {"year": 96, "month": 6, "cpi": 86.24, "taxPct": 128.6, "value": "96-06", "label": "96年06月(128.6%)"}, {"year": 96, "month": 7, "cpi": 86.04, "taxPct": 128.9, "value": "96-07", "label": "96年07月(128.9%)"}, {"year": 96, "month": 8, "cpi": 87.18, "taxPct": 127.2, "value": "96-08", "label": "96年08月(127.2%)"}, {"year": 96, "month": 9, "cpi": 87.99, "taxPct": 126.0, "value": "96-09", "label": "96年09月(126.0%)"}, {"year": 96, "month": 10, "cpi": 89.86, "taxPct": 123.4, "value": "96-10", "label": "96年10月(123.4%)"}, {"year": 96, "month": 11, "cpi": 89.33, "taxPct": 124.2, "value": "96-11", "label": "96年11月(124.2%)"}, {"year": 96, "month": 12, "cpi": 88.26, "taxPct": 125.7, "value": "96-12", "label": "96年12月(125.7%)"}, {"year": 97, "month": 1, "cpi": 87.75, "taxPct": 126.4, "value": "97-01", "label": "97年01月(126.4%)"}, {"year": 97, "month": 2, "cpi": 88.87, "taxPct": 124.8, "value": "97-02", "label": "97年02月(124.8%)"}, {"year": 97, "month": 3, "cpi": 87.91, "taxPct": 126.2, "value": "97-03", "label": "97年03月(126.2%)"}, {"year": 97, "month": 4, "cpi": 88.86, "taxPct": 124.8, "value": "97-04", "label": "97年04月(124.8%)"}, {"year": 97, "month": 5, "cpi": 88.9, "taxPct": 124.8, "value": "97-05", "label": "97年05月(124.8%)"}, {"year": 97, "month": 6, "cpi": 90.53, "taxPct": 122.5, "value": "97-06", "label": "97年06月(122.5%)"}, {"year": 97, "month": 7, "cpi": 91.04, "taxPct": 121.8, "value": "97-07", "label": "97年07月(121.8%)"}, {"year": 97, "month": 8, "cpi": 91.27, "taxPct": 121.5, "value": "97-08", "label": "97年08月(121.5%)"}, {"year": 97, "month": 9, "cpi": 90.72, "taxPct": 122.3, "value": "97-09", "label": "97年09月(122.3%)"}, {"year": 97, "month": 10, "cpi": 92.0, "taxPct": 120.6, "value": "97-10", "label": "97年10月(120.6%)"}, {"year": 97, "month": 11, "cpi": 91.05, "taxPct": 121.8, "value": "97-11", "label": "97年11月(121.8%)"}, {"year": 97, "month": 12, "cpi": 89.38, "taxPct": 124.1, "value": "97-12", "label": "97年12月(124.1%)"}, {"year": 98, "month": 1, "cpi": 89.04, "taxPct": 124.6, "value": "98-01", "label": "98年01月(124.6%)"}, {"year": 98, "month": 2, "cpi": 87.68, "taxPct": 126.5, "value": "98-02", "label": "98年02月(126.5%)"}, {"year": 98, "month": 3, "cpi": 87.78, "taxPct": 126.3, "value": "98-03", "label": "98年03月(126.3%)"}, {"year": 98, "month": 4, "cpi": 88.45, "taxPct": 125.4, "value": "98-04", "label": "98年04月(125.4%)"}, {"year": 98, "month": 5, "cpi": 88.82, "taxPct": 124.9, "value": "98-05", "label": "98年05月(124.9%)"}, {"year": 98, "month": 6, "cpi": 88.73, "taxPct": 125.0, "value": "98-06", "label": "98年06月(125.0%)"}, {"year": 98, "month": 7, "cpi": 88.91, "taxPct": 124.7, "value": "98-07", "label": "98年07月(124.7%)"}, {"year": 98, "month": 8, "cpi": 90.52, "taxPct": 122.5, "value": "98-08", "label": "98年08月(122.5%)"}, {"year": 98, "month": 9, "cpi": 89.91, "taxPct": 123.4, "value": "98-09", "label": "98年09月(123.4%)"}, {"year": 98, "month": 10, "cpi": 90.26, "taxPct": 122.9, "value": "98-10", "label": "98年10月(122.9%)"}, {"year": 98, "month": 11, "cpi": 89.59, "taxPct": 123.8, "value": "98-11", "label": "98年11月(123.8%)"}, {"year": 98, "month": 12, "cpi": 89.16, "taxPct": 124.4, "value": "98-12", "label": "98年12月(124.4%)"}, {"year": 99, "month": 1, "cpi": 89.27, "taxPct": 124.2, "value": "99-01", "label": "99年01月(124.2%)"}, {"year": 99, "month": 2, "cpi": 89.74, "taxPct": 123.6, "value": "99-02", "label": "99年02月(123.6%)"}, {"year": 99, "month": 3, "cpi": 88.89, "taxPct": 124.8, "value": "99-03", "label": "99年03月(124.8%)"}, {"year": 99, "month": 4, "cpi": 89.64, "taxPct": 123.7, "value": "99-04", "label": "99年04月(123.7%)"}, {"year": 99, "month": 5, "cpi": 89.49, "taxPct": 123.9, "value": "99-05", "label": "99年05月(123.9%)"}, {"year": 99, "month": 6, "cpi": 89.8, "taxPct": 123.5, "value": "99-06", "label": "99年06月(123.5%)"}, {"year": 99, "month": 7, "cpi": 90.08, "taxPct": 123.1, "value": "99-07", "label": "99年07月(123.1%)"}, {"year": 99, "month": 8, "cpi": 90.09, "taxPct": 123.1, "value": "99-08", "label": "99年08月(123.1%)"}, {"year": 99, "month": 9, "cpi": 90.18, "taxPct": 123.0, "value": "99-09", "label": "99年09月(123.0%)"}, {"year": 99, "month": 10, "cpi": 90.78, "taxPct": 122.2, "value": "99-10", "label": "99年10月(122.2%)"}, {"year": 99, "month": 11, "cpi": 90.95, "taxPct": 121.9, "value": "99-11", "label": "99年11月(121.9%)"}, {"year": 99, "month": 12, "cpi": 90.26, "taxPct": 122.9, "value": "99-12", "label": "99年12月(122.9%)"}, {"year": 100, "month": 1, "cpi": 90.25, "taxPct": 122.9, "value": "100-01", "label": "100年01月(122.9%)"}, {"year": 100, "month": 2, "cpi": 90.93, "taxPct": 122.0, "value": "100-02", "label": "100年02月(122.0%)"}, {"year": 100, "month": 3, "cpi": 90.13, "taxPct": 123.1, "value": "100-03", "label": "100年03月(123.1%)"}, {"year": 100, "month": 4, "cpi": 90.8, "taxPct": 122.1, "value": "100-04", "label": "100年04月(122.1%)"}, {"year": 100, "month": 5, "cpi": 90.98, "taxPct": 121.9, "value": "100-05", "label": "100年05月(121.9%)"}, {"year": 100, "month": 6, "cpi": 91.54, "taxPct": 121.2, "value": "100-06", "label": "100年06月(121.2%)"}, {"year": 100, "month": 7, "cpi": 91.27, "taxPct": 121.5, "value": "100-07", "label": "100年07月(121.5%)"}, {"year": 100, "month": 8, "cpi": 91.3, "taxPct": 121.5, "value": "100-08", "label": "100年08月(121.5%)"}, {"year": 100, "month": 9, "cpi": 91.42, "taxPct": 121.3, "value": "100-09", "label": "100年09月(121.3%)"}, {"year": 100, "month": 10, "cpi": 91.91, "taxPct": 120.7, "value": "100-10", "label": "100年10月(120.7%)"}, {"year": 100, "month": 11, "cpi": 91.89, "taxPct": 120.7, "value": "100-11", "label": "100年11月(120.7%)"}, {"year": 100, "month": 12, "cpi": 92.09, "taxPct": 120.4, "value": "100-12", "label": "100年12月(120.4%)"}, {"year": 101, "month": 1, "cpi": 92.38, "taxPct": 120.1, "value": "101-01", "label": "101年01月(120.1%)"}, {"year": 101, "month": 2, "cpi": 91.15, "taxPct": 121.7, "value": "101-02", "label": "101年02月(121.7%)"}, {"year": 101, "month": 3, "cpi": 91.27, "taxPct": 121.5, "value": "101-03", "label": "101年03月(121.5%)"}, {"year": 101, "month": 4, "cpi": 92.11, "taxPct": 120.4, "value": "101-04", "label": "101年04月(120.4%)"}, {"year": 101, "month": 5, "cpi": 92.57, "taxPct": 119.8, "value": "101-05", "label": "101年05月(119.8%)"}, {"year": 101, "month": 6, "cpi": 93.16, "taxPct": 119.1, "value": "101-06", "label": "101年06月(119.1%)"}, {"year": 101, "month": 7, "cpi": 93.52, "taxPct": 118.6, "value": "101-07", "label": "101年07月(118.6%)"}, {"year": 101, "month": 8, "cpi": 94.43, "taxPct": 117.5, "value": "101-08", "label": "101年08月(117.5%)"}, {"year": 101, "month": 9, "cpi": 94.12, "taxPct": 117.8, "value": "101-09", "label": "101年09月(117.8%)"}, {"year": 101, "month": 10, "cpi": 94.05, "taxPct": 117.9, "value": "101-10", "label": "101年10月(117.9%)"}, {"year": 101, "month": 11, "cpi": 93.35, "taxPct": 118.8, "value": "101-11", "label": "101年11月(118.8%)"}, {"year": 101, "month": 12, "cpi": 93.58, "taxPct": 118.5, "value": "101-12", "label": "101年12月(118.5%)"}, {"year": 102, "month": 1, "cpi": 93.41, "taxPct": 118.7, "value": "102-01", "label": "102年01月(118.7%)"}, {"year": 102, "month": 2, "cpi": 93.85, "taxPct": 118.2, "value": "102-02", "label": "102年02月(118.2%)"}, {"year": 102, "month": 3, "cpi": 92.5, "taxPct": 119.9, "value": "102-03", "label": "102年03月(119.9%)"}, {"year": 102, "month": 4, "cpi": 93.08, "taxPct": 119.2, "value": "102-04", "label": "102年04月(119.2%)"}, {"year": 102, "month": 5, "cpi": 93.25, "taxPct": 118.9, "value": "102-05", "label": "102年05月(118.9%)"}, {"year": 102, "month": 6, "cpi": 93.72, "taxPct": 118.3, "value": "102-06", "label": "102年06月(118.3%)"}, {"year": 102, "month": 7, "cpi": 93.58, "taxPct": 118.5, "value": "102-07", "label": "102年07月(118.5%)"}, {"year": 102, "month": 8, "cpi": 93.69, "taxPct": 118.4, "value": "102-08", "label": "102年08月(118.4%)"}, {"year": 102, "month": 9, "cpi": 94.92, "taxPct": 116.8, "value": "102-09", "label": "102年09月(116.8%)"}, {"year": 102, "month": 10, "cpi": 94.66, "taxPct": 117.2, "value": "102-10", "label": "102年10月(117.2%)"}, {"year": 102, "month": 11, "cpi": 93.98, "taxPct": 118.0, "value": "102-11", "label": "102年11月(118.0%)"}, {"year": 102, "month": 12, "cpi": 93.89, "taxPct": 118.1, "value": "102-12", "label": "102年12月(118.1%)"}, {"year": 103, "month": 1, "cpi": 94.18, "taxPct": 117.8, "value": "103-01", "label": "103年01月(117.8%)"}, {"year": 103, "month": 2, "cpi": 93.81, "taxPct": 118.2, "value": "103-02", "label": "103年02月(118.2%)"}, {"year": 103, "month": 3, "cpi": 93.99, "taxPct": 118.0, "value": "103-03", "label": "103年03月(118.0%)"}, {"year": 103, "month": 4, "cpi": 94.62, "taxPct": 117.2, "value": "103-04", "label": "103年04月(117.2%)"}, {"year": 103, "month": 5, "cpi": 94.76, "taxPct": 117.0, "value": "103-05", "label": "103年05月(117.0%)"}, {"year": 103, "month": 6, "cpi": 95.25, "taxPct": 116.4, "value": "103-06", "label": "103年06月(116.4%)"}, {"year": 103, "month": 7, "cpi": 95.22, "taxPct": 116.5, "value": "103-07", "label": "103年07月(116.5%)"}, {"year": 103, "month": 8, "cpi": 95.64, "taxPct": 116.0, "value": "103-08", "label": "103年08月(116.0%)"}, {"year": 103, "month": 9, "cpi": 95.59, "taxPct": 116.0, "value": "103-09", "label": "103年09月(116.0%)"}, {"year": 103, "month": 10, "cpi": 95.66, "taxPct": 115.9, "value": "103-10", "label": "103年10月(115.9%)"}, {"year": 103, "month": 11, "cpi": 94.78, "taxPct": 117.0, "value": "103-11", "label": "103年11月(117.0%)"}, {"year": 103, "month": 12, "cpi": 94.46, "taxPct": 117.4, "value": "103-12", "label": "103年12月(117.4%)"}, {"year": 104, "month": 1, "cpi": 93.3, "taxPct": 118.9, "value": "104-01", "label": "104年01月(118.9%)"}, {"year": 104, "month": 2, "cpi": 93.62, "taxPct": 118.5, "value": "104-02", "label": "104年02月(118.5%)"}, {"year": 104, "month": 3, "cpi": 93.41, "taxPct": 118.7, "value": "104-03", "label": "104年03月(118.7%)"}, {"year": 104, "month": 4, "cpi": 93.84, "taxPct": 118.2, "value": "104-04", "label": "104年04月(118.2%)"}, {"year": 104, "month": 5, "cpi": 94.07, "taxPct": 117.9, "value": "104-05", "label": "104年05月(117.9%)"}, {"year": 104, "month": 6, "cpi": 94.72, "taxPct": 117.1, "value": "104-06", "label": "104年06月(117.1%)"}, {"year": 104, "month": 7, "cpi": 94.62, "taxPct": 117.2, "value": "104-07", "label": "104年07月(117.2%)"}, {"year": 104, "month": 8, "cpi": 95.21, "taxPct": 116.5, "value": "104-08", "label": "104年08月(116.5%)"}, {"year": 104, "month": 9, "cpi": 95.87, "taxPct": 115.7, "value": "104-09", "label": "104年09月(115.7%)"}, {"year": 104, "month": 10, "cpi": 95.95, "taxPct": 115.6, "value": "104-10", "label": "104年10月(115.6%)"}, {"year": 104, "month": 11, "cpi": 95.29, "taxPct": 116.4, "value": "104-11", "label": "104年11月(116.4%)"}, {"year": 104, "month": 12, "cpi": 94.58, "taxPct": 117.3, "value": "104-12", "label": "104年12月(117.3%)"}, {"year": 105, "month": 1, "cpi": 94.05, "taxPct": 117.9, "value": "105-01", "label": "105年01月(117.9%)"}, {"year": 105, "month": 2, "cpi": 95.88, "taxPct": 115.7, "value": "105-02", "label": "105年02月(115.7%)"}, {"year": 105, "month": 3, "cpi": 95.29, "taxPct": 116.4, "value": "105-03", "label": "105年03月(116.4%)"}, {"year": 105, "month": 4, "cpi": 95.6, "taxPct": 116.0, "value": "105-04", "label": "105年04月(116.0%)"}, {"year": 105, "month": 5, "cpi": 95.23, "taxPct": 116.5, "value": "105-05", "label": "105年05月(116.5%)"}, {"year": 105, "month": 6, "cpi": 95.57, "taxPct": 116.1, "value": "105-06", "label": "105年06月(116.1%)"}, {"year": 105, "month": 7, "cpi": 95.79, "taxPct": 115.8, "value": "105-07", "label": "105年07月(115.8%)"}, {"year": 105, "month": 8, "cpi": 95.75, "taxPct": 115.8, "value": "105-08", "label": "105年08月(115.8%)"}, {"year": 105, "month": 9, "cpi": 96.19, "taxPct": 115.3, "value": "105-09", "label": "105年09月(115.3%)"}, {"year": 105, "month": 10, "cpi": 97.58, "taxPct": 113.7, "value": "105-10", "label": "105年10月(113.7%)"}, {"year": 105, "month": 11, "cpi": 97.17, "taxPct": 114.1, "value": "105-11", "label": "105年11月(114.1%)"}, {"year": 105, "month": 12, "cpi": 96.18, "taxPct": 115.3, "value": "105-12", "label": "105年12月(115.3%)"}, {"year": 106, "month": 1, "cpi": 96.16, "taxPct": 115.3, "value": "106-01", "label": "106年01月(115.3%)"}, {"year": 106, "month": 2, "cpi": 95.82, "taxPct": 115.7, "value": "106-02", "label": "106年02月(115.7%)"}, {"year": 106, "month": 3, "cpi": 95.46, "taxPct": 116.2, "value": "106-03", "label": "106年03月(116.2%)"}, {"year": 106, "month": 4, "cpi": 95.69, "taxPct": 115.9, "value": "106-04", "label": "106年04月(115.9%)"}, {"year": 106, "month": 5, "cpi": 95.8, "taxPct": 115.8, "value": "106-05", "label": "106年05月(115.8%)"}, {"year": 106, "month": 6, "cpi": 96.53, "taxPct": 114.9, "value": "106-06", "label": "106年06月(114.9%)"}, {"year": 106, "month": 7, "cpi": 96.53, "taxPct": 114.9, "value": "106-07", "label": "106年07月(114.9%)"}, {"year": 106, "month": 8, "cpi": 96.67, "taxPct": 114.7, "value": "106-08", "label": "106年08月(114.7%)"}, {"year": 106, "month": 9, "cpi": 96.66, "taxPct": 114.7, "value": "106-09", "label": "106年09月(114.7%)"}, {"year": 106, "month": 10, "cpi": 97.26, "taxPct": 114.0, "value": "106-10", "label": "106年10月(114.0%)"}, {"year": 106, "month": 11, "cpi": 97.5, "taxPct": 113.8, "value": "106-11", "label": "106年11月(113.8%)"}, {"year": 106, "month": 12, "cpi": 97.35, "taxPct": 113.9, "value": "106-12", "label": "106年12月(113.9%)"}, {"year": 107, "month": 1, "cpi": 97.02, "taxPct": 114.3, "value": "107-01", "label": "107年01月(114.3%)"}, {"year": 107, "month": 2, "cpi": 97.93, "taxPct": 113.3, "value": "107-02", "label": "107年02月(113.3%)"}, {"year": 107, "month": 3, "cpi": 96.98, "taxPct": 114.4, "value": "107-03", "label": "107年03月(114.4%)"}, {"year": 107, "month": 4, "cpi": 97.61, "taxPct": 113.6, "value": "107-04", "label": "107年04月(113.6%)"}, {"year": 107, "month": 5, "cpi": 97.48, "taxPct": 113.8, "value": "107-05", "label": "107年05月(113.8%)"}, {"year": 107, "month": 6, "cpi": 97.88, "taxPct": 113.3, "value": "107-06", "label": "107年06月(113.3%)"}, {"year": 107, "month": 7, "cpi": 98.22, "taxPct": 112.9, "value": "107-07", "label": "107年07月(112.9%)"}, {"year": 107, "month": 8, "cpi": 98.16, "taxPct": 113.0, "value": "107-08", "label": "107年08月(113.0%)"}, {"year": 107, "month": 9, "cpi": 98.32, "taxPct": 112.8, "value": "107-09", "label": "107年09月(112.8%)"}, {"year": 107, "month": 10, "cpi": 98.39, "taxPct": 112.7, "value": "107-10", "label": "107年10月(112.7%)"}, {"year": 107, "month": 11, "cpi": 97.78, "taxPct": 113.4, "value": "107-11", "label": "107年11月(113.4%)"}, {"year": 107, "month": 12, "cpi": 97.29, "taxPct": 114.0, "value": "107-12", "label": "107年12月(114.0%)"}, {"year": 108, "month": 1, "cpi": 97.19, "taxPct": 114.1, "value": "108-01", "label": "108年01月(114.1%)"}, {"year": 108, "month": 2, "cpi": 98.14, "taxPct": 113.0, "value": "108-02", "label": "108年02月(113.0%)"}, {"year": 108, "month": 3, "cpi": 97.52, "taxPct": 113.7, "value": "108-03", "label": "108年03月(113.7%)"}, {"year": 108, "month": 4, "cpi": 98.25, "taxPct": 112.9, "value": "108-04", "label": "108年04月(112.9%)"}, {"year": 108, "month": 5, "cpi": 98.39, "taxPct": 112.7, "value": "108-05", "label": "108年05月(112.7%)"}, {"year": 108, "month": 6, "cpi": 98.71, "taxPct": 112.4, "value": "108-06", "label": "108年06月(112.4%)"}, {"year": 108, "month": 7, "cpi": 98.6, "taxPct": 112.5, "value": "108-07", "label": "108年07月(112.5%)"}, {"year": 108, "month": 8, "cpi": 98.58, "taxPct": 112.5, "value": "108-08", "label": "108年08月(112.5%)"}, {"year": 108, "month": 9, "cpi": 98.73, "taxPct": 112.3, "value": "108-09", "label": "108年09月(112.3%)"}, {"year": 108, "month": 10, "cpi": 98.75, "taxPct": 112.3, "value": "108-10", "label": "108年10月(112.3%)"}, {"year": 108, "month": 11, "cpi": 98.35, "taxPct": 112.8, "value": "108-11", "label": "108年11月(112.8%)"}, {"year": 108, "month": 12, "cpi": 98.41, "taxPct": 112.7, "value": "108-12", "label": "108年12月(112.7%)"}, {"year": 109, "month": 1, "cpi": 99.0, "taxPct": 112.0, "value": "109-01", "label": "109年01月(112.0%)"}, {"year": 109, "month": 2, "cpi": 97.94, "taxPct": 113.2, "value": "109-02", "label": "109年02月(113.2%)"}, {"year": 109, "month": 3, "cpi": 97.5, "taxPct": 113.8, "value": "109-03", "label": "109年03月(113.8%)"}, {"year": 109, "month": 4, "cpi": 97.3, "taxPct": 114.0, "value": "109-04", "label": "109年04月(114.0%)"}, {"year": 109, "month": 5, "cpi": 97.2, "taxPct": 114.1, "value": "109-05", "label": "109年05月(114.1%)"}, {"year": 109, "month": 6, "cpi": 97.98, "taxPct": 113.2, "value": "109-06", "label": "109年06月(113.2%)"}, {"year": 109, "month": 7, "cpi": 98.1, "taxPct": 113.1, "value": "109-07", "label": "109年07月(113.1%)"}, {"year": 109, "month": 8, "cpi": 98.25, "taxPct": 112.9, "value": "109-08", "label": "109年08月(112.9%)"}, {"year": 109, "month": 9, "cpi": 98.16, "taxPct": 113.0, "value": "109-09", "label": "109年09月(113.0%)"}, {"year": 109, "month": 10, "cpi": 98.49, "taxPct": 112.6, "value": "109-10", "label": "109年10月(112.6%)"}, {"year": 109, "month": 11, "cpi": 98.44, "taxPct": 112.7, "value": "109-11", "label": "109年11月(112.7%)"}, {"year": 109, "month": 12, "cpi": 98.45, "taxPct": 112.7, "value": "109-12", "label": "109年12月(112.7%)"}, {"year": 110, "month": 1, "cpi": 98.81, "taxPct": 112.2, "value": "110-01", "label": "110年01月(112.2%)"}, {"year": 110, "month": 2, "cpi": 99.29, "taxPct": 111.7, "value": "110-02", "label": "110年02月(111.7%)"}, {"year": 110, "month": 3, "cpi": 98.69, "taxPct": 112.4, "value": "110-03", "label": "110年03月(112.4%)"}, {"year": 110, "month": 4, "cpi": 99.35, "taxPct": 111.6, "value": "110-04", "label": "110年04月(111.6%)"}, {"year": 110, "month": 5, "cpi": 99.58, "taxPct": 111.4, "value": "110-05", "label": "110年05月(111.4%)"}, {"year": 110, "month": 6, "cpi": 99.77, "taxPct": 111.2, "value": "110-06", "label": "110年06月(111.2%)"}, {"year": 110, "month": 7, "cpi": 99.97, "taxPct": 110.9, "value": "110-07", "label": "110年07月(110.9%)"}, {"year": 110, "month": 8, "cpi": 100.55, "taxPct": 110.3, "value": "110-08", "label": "110年08月(110.3%)"}, {"year": 110, "month": 9, "cpi": 100.71, "taxPct": 110.1, "value": "110-09", "label": "110年09月(110.1%)"}, {"year": 110, "month": 10, "cpi": 101.0, "taxPct": 109.8, "value": "110-10", "label": "110年10月(109.8%)"}, {"year": 110, "month": 11, "cpi": 101.24, "taxPct": 109.6, "value": "110-11", "label": "110年11月(109.6%)"}, {"year": 110, "month": 12, "cpi": 101.04, "taxPct": 109.8, "value": "110-12", "label": "110年12月(109.8%)"}, {"year": 111, "month": 1, "cpi": 101.61, "taxPct": 109.2, "value": "111-01", "label": "111年01月(109.2%)"}, {"year": 111, "month": 2, "cpi": 101.6, "taxPct": 109.2, "value": "111-02", "label": "111年02月(109.2%)"}, {"year": 111, "month": 3, "cpi": 101.92, "taxPct": 108.8, "value": "111-03", "label": "111年03月(108.8%)"}, {"year": 111, "month": 4, "cpi": 102.7, "taxPct": 108.0, "value": "111-04", "label": "111年04月(108.0%)"}, {"year": 111, "month": 5, "cpi": 102.96, "taxPct": 107.7, "value": "111-05", "label": "111年05月(107.7%)"}, {"year": 111, "month": 6, "cpi": 103.35, "taxPct": 107.3, "value": "111-06", "label": "111年06月(107.3%)"}, {"year": 111, "month": 7, "cpi": 103.32, "taxPct": 107.3, "value": "111-07", "label": "111年07月(107.3%)"}, {"year": 111, "month": 8, "cpi": 103.24, "taxPct": 107.4, "value": "111-08", "label": "111年08月(107.4%)"}, {"year": 111, "month": 9, "cpi": 103.49, "taxPct": 107.2, "value": "111-09", "label": "111年09月(107.2%)"}, {"year": 111, "month": 10, "cpi": 103.77, "taxPct": 106.9, "value": "111-10", "label": "111年10月(106.9%)"}, {"year": 111, "month": 11, "cpi": 103.62, "taxPct": 107.0, "value": "111-11", "label": "111年11月(107.0%)"}, {"year": 111, "month": 12, "cpi": 103.78, "taxPct": 106.9, "value": "111-12", "label": "111年12月(106.9%)"}, {"year": 112, "month": 1, "cpi": 104.71, "taxPct": 105.9, "value": "112-01", "label": "112年01月(105.9%)"}, {"year": 112, "month": 2, "cpi": 104.06, "taxPct": 106.6, "value": "112-02", "label": "112年02月(106.6%)"}, {"year": 112, "month": 3, "cpi": 104.32, "taxPct": 106.3, "value": "112-03", "label": "112年03月(106.3%)"}, {"year": 112, "month": 4, "cpi": 105.11, "taxPct": 105.5, "value": "112-04", "label": "112年04月(105.5%)"}, {"year": 112, "month": 5, "cpi": 105.04, "taxPct": 105.6, "value": "112-05", "label": "112年05月(105.6%)"}, {"year": 112, "month": 6, "cpi": 105.16, "taxPct": 105.5, "value": "112-06", "label": "112年06月(105.5%)"}, {"year": 112, "month": 7, "cpi": 105.26, "taxPct": 105.4, "value": "112-07", "label": "112年07月(105.4%)"}, {"year": 112, "month": 8, "cpi": 105.85, "taxPct": 104.8, "value": "112-08", "label": "112年08月(104.8%)"}, {"year": 112, "month": 9, "cpi": 106.52, "taxPct": 104.1, "value": "112-09", "label": "112年09月(104.1%)"}, {"year": 112, "month": 10, "cpi": 106.92, "taxPct": 103.7, "value": "112-10", "label": "112年10月(103.7%)"}, {"year": 112, "month": 11, "cpi": 106.62, "taxPct": 104.0, "value": "112-11", "label": "112年11月(104.0%)"}, {"year": 112, "month": 12, "cpi": 106.58, "taxPct": 104.1, "value": "112-12", "label": "112年12月(104.1%)"}, {"year": 113, "month": 1, "cpi": 106.59, "taxPct": 104.1, "value": "113-01", "label": "113年01月(104.1%)"}, {"year": 113, "month": 2, "cpi": 107.26, "taxPct": 103.4, "value": "113-02", "label": "113年02月(103.4%)"}, {"year": 113, "month": 3, "cpi": 106.56, "taxPct": 104.1, "value": "113-03", "label": "113年03月(104.1%)"}, {"year": 113, "month": 4, "cpi": 107.15, "taxPct": 103.5, "value": "113-04", "label": "113年04月(103.5%)"}, {"year": 113, "month": 5, "cpi": 107.38, "taxPct": 103.3, "value": "113-05", "label": "113年05月(103.3%)"}, {"year": 113, "month": 6, "cpi": 107.71, "taxPct": 103.0, "value": "113-06", "label": "113年06月(103.0%)"}, {"year": 113, "month": 7, "cpi": 107.92, "taxPct": 102.8, "value": "113-07", "label": "113年07月(102.8%)"}, {"year": 113, "month": 8, "cpi": 108.34, "taxPct": 102.4, "value": "113-08", "label": "113年08月(102.4%)"}, {"year": 113, "month": 9, "cpi": 108.46, "taxPct": 102.3, "value": "113-09", "label": "113年09月(102.3%)"}, {"year": 113, "month": 10, "cpi": 108.73, "taxPct": 102.0, "value": "113-10", "label": "113年10月(102.0%)"}, {"year": 113, "month": 11, "cpi": 108.84, "taxPct": 101.9, "value": "113-11", "label": "113年11月(101.9%)"}, {"year": 113, "month": 12, "cpi": 108.82, "taxPct": 101.9, "value": "113-12", "label": "113年12月(101.9%)"}, {"year": 114, "month": 1, "cpi": 109.44, "taxPct": 101.3, "value": "114-01", "label": "114年01月(101.3%)"}, {"year": 114, "month": 2, "cpi": 109.0, "taxPct": 101.8, "value": "114-02", "label": "114年02月(101.8%)"}, {"year": 114, "month": 3, "cpi": 109.05, "taxPct": 101.7, "value": "114-03", "label": "114年03月(101.7%)"}, {"year": 114, "month": 4, "cpi": 109.33, "taxPct": 101.4, "value": "114-04", "label": "114年04月(101.4%)"}, {"year": 114, "month": 5, "cpi": 109.03, "taxPct": 101.7, "value": "114-05", "label": "114年05月(101.7%)"}, {"year": 114, "month": 6, "cpi": 109.17, "taxPct": 101.6, "value": "114-06", "label": "114年06月(101.6%)"}, {"year": 114, "month": 7, "cpi": 109.57, "taxPct": 101.2, "value": "114-07", "label": "114年07月(101.2%)"}, {"year": 114, "month": 8, "cpi": 110.07, "taxPct": 100.8, "value": "114-08", "label": "114年08月(100.8%)"}, {"year": 114, "month": 9, "cpi": 109.82, "taxPct": 101.0, "value": "114-09", "label": "114年09月(101.0%)"}, {"year": 114, "month": 10, "cpi": 110.33, "taxPct": 100.5, "value": "114-10", "label": "114年10月(100.5%)"}, {"year": 114, "month": 11, "cpi": 110.16, "taxPct": 100.7, "value": "114-11", "label": "114年11月(100.7%)"}, {"year": 114, "month": 12, "cpi": 110.24, "taxPct": 100.6, "value": "114-12", "label": "114年12月(100.6%)"}, {"year": 115, "month": 1, "cpi": 110.2, "taxPct": 100.6, "value": "115-01", "label": "115年01月(100.6%)"}, {"year": 115, "month": 2, "cpi": 110.91, "taxPct": 100.0, "value": "115-02", "label": "115年02月(100.0%)"}];
+
+    function n(v) {
+      const x = Number(v);
+      return Number.isFinite(x) ? x : 0;
+    }
+
+    function money(v) {
+      return 'NT$ ' + Math.max(0, Math.round(v)).toLocaleString('zh-TW');
+    }
+
+    function num(v, digits = 2) {
+      return Number(v || 0).toLocaleString('zh-TW', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: digits
+      });
+    }
+
+    function getHoldingYearsFromTransferDate() {
+      const rocYear = Number(document.getElementById('transferYear').value);
+      const month = Number(document.getElementById('transferMonth').value);
+      if (!Number.isFinite(rocYear) || !Number.isFinite(month) || month < 1 || month > 12) return 0;
+
+      const adYear = rocYear + 1911;
+      const now = new Date();
+      let years = now.getFullYear() - adYear;
+      const currentMonth = now.getMonth() + 1;
+      if (currentMonth < month) years -= 1;
+      return Math.max(0, years);
+    }
+
+    function getHoldingRule(years) {
+      if (years > 40) return { reductionRate: 0.4, A: 0.06, B: 0.18, label: '持有超過 40 年' };
+      if (years > 30) return { reductionRate: 0.3, A: 0.07, B: 0.21, label: '持有超過 30 年' };
+      if (years > 20) return { reductionRate: 0.2, A: 0.08, B: 0.24, label: '持有超過 20 年' };
+      return { reductionRate: 0, A: 0.1, B: 0.3, label: '持有 20 年以下' };
+    }
+
+    function buildTransferDateOptions() {
+      const yearSelect = document.getElementById('transferYear');
+      const monthSelect = document.getElementById('transferMonth');
+      yearSelect.innerHTML = '';
+      monthSelect.innerHTML = '';
+
+      const years = [...new Set(cpiMonthOptions.map(x => x.year))];
+      years.forEach(y => {
+        const option = document.createElement('option');
+        option.value = String(y);
+        option.textContent = `${y}年`;
+        yearSelect.appendChild(option);
+      });
+
+      for (let m = 1; m <= 12; m++) {
+        const option = document.createElement('option');
+        option.value = String(m).padStart(2, '0');
+        option.textContent = `${m}月`;
+        monthSelect.appendChild(option);
+      }
+
+      yearSelect.value = '115';
+      monthSelect.value = '02';
+    }
+
+    function buildCpiMonthSelect() {
+      const select = document.getElementById('cpiMonthSelect');
+      select.innerHTML = '';
+
+      const first = document.createElement('option');
+      first.value = '';
+      first.textContent = '請選擇…';
+      select.appendChild(first);
+
+      cpiMonthOptions.forEach(item => {
+        const option = document.createElement('option');
+        option.value = item.value;
+        option.textContent = item.label;
+        select.appendChild(option);
+      });
+    }
+
+    function syncMonthSelectFromTransferDate() {
+      const year = document.getElementById('transferYear').value;
+      const month = document.getElementById('transferMonth').value;
+      const value = `${year}-${month}`;
+      const select = document.getElementById('cpiMonthSelect');
+      if ([...select.options].some(opt => opt.value === value)) {
+        select.value = value;
+      }
+    }
+
+    function applyMonthSelection() {
+      const value = document.getElementById('cpiMonthSelect').value;
+      if (!value) return;
+      const found = cpiMonthOptions.find(item => item.value === value);
+      if (!found) return;
+
+      document.getElementById('transferYear').value = String(found.year);
+      document.getElementById('transferMonth').value = String(found.month).padStart(2, '0');
+      document.getElementById('cpiIndex').value = found.taxPct.toFixed(1);
+      document.getElementById('cpiHint').textContent = `已自動帶入 ${found.label}，物價指數為 ${found.taxPct.toFixed(1)}%。`;
+    }
+
+    function queryCpiByTransferDate() {
+      const year = document.getElementById('transferYear').value;
+      const month = document.getElementById('transferMonth').value;
+      const value = `${year}-${month}`;
+      const found = cpiMonthOptions.find(item => item.value === value);
+
+      document.getElementById('cpiMonthSelect').value = value;
+
+      if (found) {
+        document.getElementById('cpiIndex').value = found.taxPct.toFixed(1);
+        document.getElementById('cpiHint').textContent = `已查詢並自動帶入 ${found.label}。`;
+      } else {
+        document.getElementById('cpiHint').textContent = '查無對應資料。';
+      }
+    }
+
+    function calculate() {
+      const years = getHoldingYearsFromTransferDate();
+      const currentUnit = n(document.getElementById('currentAnnouncedLandValue').value);
+      const previousUnit = n(document.getElementById('previousDeclaredValue').value);
+      const cpi = n(document.getElementById('cpiIndex').value);
+      const area = n(document.getElementById('lotArea').value);
+      const numerator = n(document.getElementById('shareNumerator').value);
+      const denominator = n(document.getElementById('shareDenominator').value);
+
+      const share = denominator > 0 ? numerator / denominator : 0;
+      const holdingRule = getHoldingRule(years);
+
+      const currentTotal = currentUnit * area * share;
+      const adjustedPreviousTotal = previousUnit * area * share * (cpi / 100);
+      const incrementTotal = Math.max(0, currentTotal - adjustedPreviousTotal);
+      const ratio = adjustedPreviousTotal > 0 ? incrementTotal / adjustedPreviousTotal : 0;
+
+      let bracket = '第 1 級';
+      let taxRate = 0.2;
+      let progressiveDiffValue = 0;
+      let formula4 = '土地漲價總數額 × 20%';
+
+      if (ratio < 1) {
+        taxRate = 0.2;
+        progressiveDiffValue = 0;
+        bracket = '第 1 級';
+      } else if (ratio < 2) {
+        bracket = '第 2 級';
+        taxRate = 0.3 - (0.3 - 0.2) * holdingRule.reductionRate;
+        progressiveDiffValue = adjustedPreviousTotal * holdingRule.A;
+        formula4 = `土地漲價總數額 × ${num(taxRate * 100)}% − 累進差額（調整後原地價 × ${num(holdingRule.A * 100)}%）`;
+      } else {
+        bracket = '第 3 級';
+        taxRate = 0.4 - (0.4 - 0.2) * holdingRule.reductionRate;
+        progressiveDiffValue = adjustedPreviousTotal * holdingRule.B;
+        formula4 = `土地漲價總數額 × ${num(taxRate * 100)}% − 累進差額（調整後原地價 × ${num(holdingRule.B * 100)}%）`;
+      }
+
+      let tax = incrementTotal * taxRate - progressiveDiffValue;
+      tax = Math.max(0, tax);
+      const selfUseTax = Math.max(0, incrementTotal * 0.1);
+
+      document.getElementById('bracket').textContent = bracket;
+      document.getElementById('holdingRule').textContent = holdingRule.label;
+      document.getElementById('holdingYearsText').textContent = `${num(years, 0)} 年`;
+      document.getElementById('appliedCpiText').textContent = `${num(cpi, 1)}%`;
+      document.getElementById('taxValue').textContent = money(tax);
+      document.getElementById('selfUseTaxValue').textContent = money(selfUseTax);
+      document.getElementById('shareText').textContent = `${num(share, 6)}（${numerator}/${denominator}）`;
+      document.getElementById('currentTotal').textContent = money(currentTotal);
+      document.getElementById('adjustedPreviousTotal').textContent = money(adjustedPreviousTotal);
+      document.getElementById('incrementTotal').textContent = money(incrementTotal);
+      document.getElementById('ratioText').textContent = `${num(ratio * 100)}%`;
+      document.getElementById('taxRateText').textContent = `${num(taxRate * 100)}%`;
+      document.getElementById('progressiveDiff').textContent = money(progressiveDiffValue);
+      document.getElementById('selfUseRate').textContent = '10%';
+
+      document.getElementById('formula1').textContent = `${num(currentUnit)} × ${num(area, 4)} × ${num(share, 6)} = ${money(currentTotal)}`;
+      document.getElementById('formula2').textContent = `${num(previousUnit)} × ${num(area, 4)} × ${num(share, 6)} × (${num(cpi, 1)} ÷ 100) = ${money(adjustedPreviousTotal)}`;
+      document.getElementById('formula3').textContent = `${money(currentTotal)} − ${money(adjustedPreviousTotal)} = ${money(incrementTotal)}`;
+      document.getElementById('formula4').textContent = formula4;
+    }
+
+    document.getElementById('queryCpi').addEventListener('click', () => {
+      queryCpiByTransferDate();
+      calculate();
+    });
+
+    document.getElementById('cpiMonthSelect').addEventListener('change', () => {
+      applyMonthSelection();
+      calculate();
+    });
+
+    document.getElementById('transferYear').addEventListener('change', () => {
+      queryCpiByTransferDate();
+      calculate();
+    });
+
+    document.getElementById('transferMonth').addEventListener('change', () => {
+      queryCpiByTransferDate();
+      calculate();
+    });
+
+    ['landType','currentAnnouncedLandValue','previousDeclaredValue','lotArea','shareNumerator','shareDenominator']
+      .forEach(id => {
+        document.getElementById(id).addEventListener('input', calculate);
+        document.getElementById(id).addEventListener('change', calculate);
+      });
+
+    document.getElementById('exampleBtn').addEventListener('click', () => {
+      document.getElementById('landType').value = 'urban';
+      document.getElementById('lotArea').value = 50;
+      document.getElementById('currentAnnouncedLandValue').value = 160000;
+      document.getElementById('previousDeclaredValue').value = 20000;
+      document.getElementById('transferYear').value = '49';
+      document.getElementById('transferMonth').value = '06';
+      queryCpiByTransferDate();
+      document.getElementById('shareNumerator').value = 1;
+      document.getElementById('shareDenominator').value = 1;
+      calculate();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('landType').value = 'urban';
+      document.getElementById('lotArea').value = '';
+      document.getElementById('currentAnnouncedLandValue').value = '';
+      document.getElementById('previousDeclaredValue').value = '';
+      document.getElementById('transferYear').value = '113';
+      document.getElementById('transferMonth').value = '06';
+      document.getElementById('shareNumerator').value = 1;
+      document.getElementById('shareDenominator').value = 1;
+      queryCpiByTransferDate();
+      calculate();
+    });
+
+
+    function loadSalesInfo() {
+      const name = localStorage.getItem('salesName') || '';
+      const phone = localStorage.getItem('salesPhone') || '';
+      const box = document.getElementById('salesPrintInfo');
+      const nameEl = document.getElementById('printSalesName');
+      const phoneEl = document.getElementById('printSalesPhone');
+      if (!box || !nameEl || !phoneEl) return;
+      nameEl.textContent = name || '--';
+      phoneEl.textContent = phone || '--';
+      box.style.display = (name || phone) ? 'block' : 'none';
+    }
+
+    document.getElementById('printResultBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    buildTransferDateOptions();
+    buildCpiMonthSelect();
+    document.getElementById('cpiMonthSelect').value = '113-06';
+    document.getElementById('transferYear').value = '113';
+    document.getElementById('transferMonth').value = '06';
+    queryCpiByTransferDate();
+    loadSalesInfo();
+    calculate();
+  </script>
+</body>
+</html>
