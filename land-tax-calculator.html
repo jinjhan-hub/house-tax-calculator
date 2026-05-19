@@ -257,177 +257,346 @@
     }
     @page {
       size: A4 portrait;
-      margin: 6mm;
+      margin: 0;
     }
+
     @media print {
       html, body {
-        width: auto;
-        height: auto;
-        min-height: 0;
-        background: #fff;
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
         overflow: visible !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
+
       body {
-        margin: 0;
-        zoom: 0.74;
+        font-size: 13px;
+        line-height: 1.45;
       }
-      .wrap,
-      .layout,
-      section,
-      .result-print-wrap,
-      .print-surface {
-        height: auto !important;
-        min-height: 0 !important;
-        overflow: visible !important;
-      }
+
       .wrap {
-        max-width: none;
-        padding: 0;
+        width: 210mm !important;
+        max-width: none !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
+
       .layout {
-        display: block;
-      }
-      section:first-child {
-        display: none !important;
-      }
-      section:last-child {
         display: block !important;
       }
-      .card {
-        border: 0;
-        border-radius: 0;
-        box-shadow: none;
-        padding: 0;
-      }
-      .print-surface {
-        padding: 0;
-      }
+
+      section:first-child,
+      .wrap > h1,
+      .wrap > .subtitle,
       .print-actions {
         display: none !important;
       }
+
+      section:last-child {
+        display: block !important;
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .card.result-print-wrap {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        position: relative !important;
+        background:
+          linear-gradient(135deg, rgba(37, 99, 235, 0.10) 0%, rgba(14, 165, 233, 0.06) 35%, rgba(255, 255, 255, 1) 65%),
+          #ffffff !important;
+      }
+
+      .print-surface {
+        width: 210mm !important;
+        min-height: 297mm !important;
+        box-sizing: border-box !important;
+        padding: 8mm 9mm 7mm !important;
+        position: relative !important;
+        z-index: 1 !important;
+        background:
+          radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.13) 0, rgba(37, 99, 235, 0.04) 33mm, transparent 58mm),
+          radial-gradient(circle at 0% 100%, rgba(20, 184, 166, 0.12) 0, rgba(20, 184, 166, 0.04) 36mm, transparent 62mm),
+          #ffffff !important;
+      }
+
       .print-title,
       .print-subtitle {
-        display: block;
+        display: block !important;
       }
-  
-    .sales-print-info {
-      display: none;
-      margin: 0 0 5px;
-      padding: 4px 7px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f8fafc;
-      font-size: 9px;
-      line-height: 1.25;
-    }
-    body.has-sales-info .sales-print-info {
-      display: block !important;
-    }
-    .sales-print-info div {
-      display: inline-block;
-      margin-right: 10px;
-    }
-    .print-title {
-        font-size: 16px;
-        margin: 0 0 3px;
+
+      .print-title {
+        margin: 0 0 3mm !important;
+        padding: 5mm 6mm !important;
+        border-radius: 7mm !important;
+        text-align: left !important;
+        color: #ffffff !important;
+        font-size: 27px !important;
+        font-weight: 900 !important;
+        letter-spacing: 1px !important;
+        background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%) !important;
+        box-shadow: 0 4mm 10mm rgba(15, 23, 42, 0.16) !important;
       }
-      .print-subtitle {
-        font-size: 9px;
-        margin: 0 0 5px;
-      }
-      .section-title {
-        font-size: 14px;
-        margin: 0 0 6px;
-      }
-      .summary-top {
-        gap: 5px;
-        margin-bottom: 5px;
-      }
-      .mini-box {
-        padding: 6px 8px;
-        border-radius: 8px;
-      }
-      .mini-label {
-        font-size: 9px;
-        margin-bottom: 1px;
-      }
-      .mini-value {
-        font-size: 12px;
-      }
-      .tax-box {
-        break-inside: avoid;
-        background: #f8fafc !important;
-        color: #0f172a !important;
-        border: 1px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 8px 10px;
-        margin-bottom: 5px;
-      }
-      .tax-box .label {
-        color: #475569 !important;
-        font-size: 9px;
-      }
-      .tax-box .value {
-        font-size: 19px;
+
+      .print-title::after {
+        content: "A4 彩色列印版";
+        float: right;
         margin-top: 2px;
+        padding: 5px 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
       }
-      .tax-box .value.small {
-        font-size: 15px;
+
+      .print-subtitle {
+        margin: 0 0 3mm !important;
+        padding: 2.8mm 4mm !important;
+        border-radius: 4mm !important;
+        text-align: left !important;
+        color: #1e3a8a !important;
+        font-size: 14px !important;
+        font-weight: 800 !important;
+        background: #dbeafe !important;
+        border: 1px solid #93c5fd !important;
       }
-      .detail-list,
-      .formula-block,
+
+      .sales-print-info {
+        display: none !important;
+        margin: 0 0 3mm !important;
+        padding: 3mm 4mm !important;
+        border: 1px solid #bfdbfe !important;
+        border-radius: 4mm !important;
+        background: #eff6ff !important;
+        color: #1e3a8a !important;
+        font-size: 13px !important;
+        line-height: 1.55 !important;
+      }
+
+      body.has-sales-info .sales-print-info {
+        display: grid !important;
+        grid-template-columns: 1.15fr 1fr 1fr;
+        gap: 4mm;
+      }
+
+      .sales-print-info div {
+        margin: 0 !important;
+        padding: 0 !important;
+        font-weight: 700 !important;
+      }
+
+      .sales-print-info span {
+        color: #0f172a !important;
+        font-weight: 900 !important;
+      }
+
+      .print-surface > h2.section-title {
+        margin: 0 0 2.5mm !important;
+        padding-left: 3mm !important;
+        border-left: 5px solid #2563eb !important;
+        color: #0f172a !important;
+        font-size: 20px !important;
+        font-weight: 900 !important;
+      }
+
       .summary-top {
-        break-inside: avoid;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 4mm !important;
+        margin: 0 0 3mm !important;
+        break-inside: avoid !important;
       }
-      .detail-list {
-        border-radius: 8px;
-        padding: 5px 9px;
+
+      .mini-box {
+        padding: 4mm 4.5mm !important;
+        border: 1px solid #bfdbfe !important;
+        border-radius: 5mm !important;
+        background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%) !important;
+        box-shadow: 0 2mm 6mm rgba(37, 99, 235, 0.08) !important;
       }
-      .detail-item {
-        padding: 3px 0;
-        line-height: 1.2;
-        font-size: 10px;
-      }
-      .formula {
-        margin-top: 6px;
-      }
-      .formula h3.section-title {
+
+      .mini-label {
+        margin-bottom: 1mm !important;
+        color: #2563eb !important;
         font-size: 12px !important;
+        font-weight: 800 !important;
+      }
+
+      .mini-value {
+        color: #0f172a !important;
+        font-size: 19px !important;
+        font-weight: 900 !important;
+      }
+
+      .tax-box {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        grid-template-areas:
+          "label1 label2"
+          "value1 value2";
+        column-gap: 5mm !important;
+        row-gap: 1.5mm !important;
+        margin: 0 0 3mm !important;
+        padding: 5mm !important;
+        border: 2px solid #2563eb !important;
+        border-radius: 6mm !important;
+        background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%) !important;
+        color: #ffffff !important;
+        break-inside: avoid !important;
+        box-shadow: 0 4mm 10mm rgba(15, 23, 42, 0.12) !important;
+      }
+
+      .tax-box .label {
+        color: rgba(255, 255, 255, 0.88) !important;
+        font-size: 13px !important;
+        font-weight: 800 !important;
+      }
+
+      .tax-box .label:nth-of-type(1) {
+        grid-area: label1;
+      }
+
+      .tax-box .label:nth-of-type(2) {
+        grid-area: label2;
         margin-top: 0 !important;
-        margin-bottom: 4px !important;
       }
+
+      .tax-box .value {
+        grid-area: value1;
+        margin-top: 0 !important;
+        color: #ffffff !important;
+        font-size: 28px !important;
+        font-weight: 950 !important;
+        line-height: 1.15 !important;
+        letter-spacing: -0.5px !important;
+      }
+
+      .tax-box .value.small {
+        grid-area: value2;
+        color: #ffffff !important;
+        font-size: 25px !important;
+      }
+
+      .detail-list {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0 4mm !important;
+        margin: 0 0 3mm !important;
+        padding: 3.5mm 4.5mm !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 5mm !important;
+        background: rgba(248, 250, 252, 0.96) !important;
+        break-inside: avoid !important;
+      }
+
+      .detail-item {
+        min-height: 9.2mm !important;
+        padding: 2mm 0 !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+        font-size: 12.8px !important;
+        line-height: 1.35 !important;
+      }
+
+      .detail-item:nth-last-child(-n + 2) {
+        border-bottom: 0 !important;
+      }
+
+      .detail-item .key {
+        color: #475569 !important;
+        font-weight: 700 !important;
+      }
+
+      .detail-item .val {
+        color: #0f172a !important;
+        font-weight: 900 !important;
+        text-align: right !important;
+      }
+
+      .formula {
+        margin-top: 0 !important;
+        break-inside: avoid !important;
+      }
+
+      .formula h3.section-title {
+        margin: 0 0 2mm !important;
+        padding-left: 3mm !important;
+        border-left: 5px solid #0f766e !important;
+        color: #0f172a !important;
+        font-size: 17px !important;
+        font-weight: 900 !important;
+      }
+
       .formula-block {
-        margin-top: 0;
-        padding: 6px 8px;
-        border-radius: 8px;
-        line-height: 1.25;
-        font-size: 9px;
+        margin: 0 0 3mm !important;
+        padding: 3.3mm 4mm !important;
+        border: 1px solid #99f6e4 !important;
+        border-radius: 5mm !important;
+        background: #f0fdfa !important;
+        color: #0f172a !important;
+        font-size: 11.6px !important;
+        line-height: 1.45 !important;
+        break-inside: avoid !important;
       }
+
+      .formula-block div {
+        margin-bottom: 1mm !important;
+      }
+
+      .formula-block div:last-child {
+        margin-bottom: 0 !important;
+      }
+
+      .formula-block strong {
+        color: #0f766e !important;
+        font-weight: 900 !important;
+      }
+
       .footer-note {
         display: block !important;
-        margin-top: 4px;
-        font-size: 8px;
-        line-height: 1.2;
-        color: #475569;
+        margin-top: 2mm !important;
+        padding: 2.3mm 3mm !important;
+        border-radius: 3mm !important;
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #334155 !important;
+        font-size: 10.6px !important;
+        line-height: 1.35 !important;
       }
+
       #printDisclaimer {
         display: block !important;
-        margin-top: 3px;
-        font-size: 7.5px;
-        line-height: 1.15;
+        margin-top: 1.6mm !important;
+        padding: 2.3mm 3mm !important;
+        background: #fff7ed !important;
+        border: 1px solid #fed7aa !important;
+        color: #9a3412 !important;
+        font-size: 9.8px !important;
+        line-height: 1.35 !important;
       }
+
       .watermark {
-        z-index: 9999 !important;
+        z-index: 0 !important;
       }
+
       .watermark span {
-        font-size: 52px;
-        color: rgba(15, 23, 42, 0.026) !important;
-      }
-      .print-surface {
-        position: relative;
-        z-index: 1;
+        font-size: 62px !important;
+        font-weight: 900 !important;
+        color: rgba(15, 23, 42, 0.035) !important;
+        transform: rotate(-24deg) !important;
       }
     }
 
