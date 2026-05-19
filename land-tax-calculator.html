@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>太平洋房屋土地增值稅試算</title>
+  <title>太平洋房屋站前店土地增值稅試算</title>
   <style>
     :root {
       --bg: #f8fafc;
@@ -216,12 +216,12 @@
       justify-content: center;
       pointer-events: none;
       overflow: hidden;
-      z-index: 50;
+      z-index: 9999;
     }
     .watermark span {
       font-size: 56px;
       font-weight: 800;
-      color: rgba(15, 23, 42, 0.035);
+      color: rgba(210, 0, 0, 0.075);
       transform: rotate(-24deg);
       white-space: nowrap;
       user-select: none;
@@ -273,8 +273,8 @@
       }
 
       body {
-        font-size: 13px;
-        line-height: 1.45;
+        font-size: 13.2px;
+        line-height: 1.42;
       }
 
       .wrap {
@@ -283,17 +283,18 @@
         min-height: 297mm !important;
         margin: 0 !important;
         padding: 0 !important;
+        background: #ffffff !important;
+      }
+
+      .wrap > h1,
+      .wrap > .subtitle,
+      section:first-child,
+      .print-actions {
+        display: none !important;
       }
 
       .layout {
         display: block !important;
-      }
-
-      section:first-child,
-      .wrap > h1,
-      .wrap > .subtitle,
-      .print-actions {
-        display: none !important;
       }
 
       section:last-child {
@@ -315,8 +316,8 @@
         overflow: hidden !important;
         position: relative !important;
         background:
-          linear-gradient(135deg, rgba(37, 99, 235, 0.10) 0%, rgba(14, 165, 233, 0.06) 35%, rgba(255, 255, 255, 1) 65%),
-          #ffffff !important;
+          radial-gradient(circle at 100% 0%, rgba(210, 0, 0, 0.10) 0, rgba(210, 0, 0, 0.05) 35mm, transparent 66mm),
+          linear-gradient(180deg, #ffffff 0%, #fff7f7 100%) !important;
       }
 
       .print-surface {
@@ -326,91 +327,120 @@
         padding: 8mm 9mm 7mm !important;
         position: relative !important;
         z-index: 1 !important;
-        background:
-          radial-gradient(circle at 100% 0%, rgba(37, 99, 235, 0.13) 0, rgba(37, 99, 235, 0.04) 33mm, transparent 58mm),
-          radial-gradient(circle at 0% 100%, rgba(20, 184, 166, 0.12) 0, rgba(20, 184, 166, 0.04) 36mm, transparent 62mm),
-          #ffffff !important;
       }
 
-      .print-title,
-      .print-subtitle {
+      .print-brand-header {
+        display: grid !important;
+        grid-template-columns: 58mm 1fr !important;
+        gap: 5mm !important;
+        align-items: stretch !important;
+        margin: 0 0 4mm !important;
+      }
+
+      .pacific-logo {
+        display: flex !important;
+        align-items: center !important;
+        gap: 3.4mm !important;
+        padding: 3.5mm 4mm !important;
+        border-radius: 5mm !important;
+        background: #d60000 !important;
+        color: #ffffff !important;
+        box-shadow: 0 2mm 7mm rgba(122, 0, 0, 0.18) !important;
+      }
+
+      .pacific-logo-img {
+        width: 15mm !important;
+        height: 15mm !important;
+        object-fit: contain !important;
         display: block !important;
+        flex: 0 0 auto !important;
+        background: #ffffff !important;
+        border-radius: 50% !important;
+        padding: 0.8mm !important;
+      }
+
+      .pacific-logo-text {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.8mm !important;
+        line-height: 1.05 !important;
+      }
+
+      .pacific-logo-text strong {
+        font-size: 15px !important;
+        letter-spacing: 0.5px !important;
+        color: #ffffff !important;
+      }
+
+      .pacific-logo-text span {
+        font-size: 14px !important;
+        font-weight: 900 !important;
+        color: #ffffff !important;
+      }
+
+      .print-title-block {
+        padding: 4mm 5mm !important;
+        border-radius: 5mm !important;
+        border: 1.5px solid #f3b4b4 !important;
+        background: #ffffff !important;
       }
 
       .print-title {
-        margin: 0 0 3mm !important;
-        padding: 5mm 6mm !important;
-        border-radius: 7mm !important;
-        text-align: left !important;
-        color: #ffffff !important;
-        font-size: 27px !important;
-        font-weight: 900 !important;
+        display: block !important;
+        margin: 0 0 1.5mm !important;
+        color: #b40000 !important;
+        font-size: 28px !important;
+        font-weight: 950 !important;
         letter-spacing: 1px !important;
-        background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%) !important;
-        box-shadow: 0 4mm 10mm rgba(15, 23, 42, 0.16) !important;
-      }
-
-      .print-title::after {
-        content: "A4 彩色列印版";
-        float: right;
-        margin-top: 2px;
-        padding: 5px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.18);
-        color: #ffffff;
-        font-size: 12px;
-        font-weight: 800;
-        letter-spacing: 0;
+        text-align: left !important;
       }
 
       .print-subtitle {
-        margin: 0 0 3mm !important;
-        padding: 2.8mm 4mm !important;
-        border-radius: 4mm !important;
+        display: block !important;
+        margin: 0 !important;
+        color: #7f1d1d !important;
+        font-size: 13.5px !important;
+        font-weight: 850 !important;
+        line-height: 1.35 !important;
         text-align: left !important;
-        color: #1e3a8a !important;
-        font-size: 14px !important;
-        font-weight: 800 !important;
-        background: #dbeafe !important;
-        border: 1px solid #93c5fd !important;
       }
 
       .sales-print-info {
         display: none !important;
-        margin: 0 0 3mm !important;
+        margin: 0 0 4mm !important;
         padding: 3mm 4mm !important;
-        border: 1px solid #bfdbfe !important;
+        border: 1.5px solid #fecaca !important;
+        border-left: 5px solid #d60000 !important;
         border-radius: 4mm !important;
-        background: #eff6ff !important;
-        color: #1e3a8a !important;
-        font-size: 13px !important;
-        line-height: 1.55 !important;
+        background: #fff5f5 !important;
+        color: #450a0a !important;
+        font-size: 13.3px !important;
+        line-height: 1.5 !important;
       }
 
-      body.has-sales-info .sales-print-info {
+      body.has-sales-info .sales-print-info,
+      .sales-print-info[style*="block"] {
         display: grid !important;
-        grid-template-columns: 1.15fr 1fr 1fr;
-        gap: 4mm;
+        grid-template-columns: 1.2fr 1fr 1fr !important;
+        gap: 4mm !important;
       }
 
       .sales-print-info div {
-        margin: 0 !important;
-        padding: 0 !important;
-        font-weight: 700 !important;
+        font-weight: 800 !important;
       }
 
       .sales-print-info span {
-        color: #0f172a !important;
-        font-weight: 900 !important;
+        font-weight: 950 !important;
+        color: #111827 !important;
       }
 
       .print-surface > h2.section-title {
         margin: 0 0 2.5mm !important;
         padding-left: 3mm !important;
-        border-left: 5px solid #2563eb !important;
-        color: #0f172a !important;
+        border-left: 5px solid #d60000 !important;
+        color: #111827 !important;
         font-size: 20px !important;
-        font-weight: 900 !important;
+        font-weight: 950 !important;
       }
 
       .summary-top {
@@ -423,23 +453,23 @@
 
       .mini-box {
         padding: 4mm 4.5mm !important;
-        border: 1px solid #bfdbfe !important;
+        border: 1.5px solid #fecaca !important;
         border-radius: 5mm !important;
-        background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%) !important;
-        box-shadow: 0 2mm 6mm rgba(37, 99, 235, 0.08) !important;
+        background: #ffffff !important;
+        box-shadow: 0 2mm 6mm rgba(210, 0, 0, 0.07) !important;
       }
 
       .mini-label {
         margin-bottom: 1mm !important;
-        color: #2563eb !important;
+        color: #b40000 !important;
         font-size: 12px !important;
-        font-weight: 800 !important;
+        font-weight: 850 !important;
       }
 
       .mini-value {
-        color: #0f172a !important;
+        color: #111827 !important;
         font-size: 19px !important;
-        font-weight: 900 !important;
+        font-weight: 950 !important;
       }
 
       .tax-box {
@@ -452,18 +482,18 @@
         row-gap: 1.5mm !important;
         margin: 0 0 3mm !important;
         padding: 5mm !important;
-        border: 2px solid #2563eb !important;
+        border: 0 !important;
         border-radius: 6mm !important;
-        background: linear-gradient(135deg, #1d4ed8 0%, #0f766e 100%) !important;
+        background: linear-gradient(135deg, #d60000 0%, #8b0000 100%) !important;
         color: #ffffff !important;
         break-inside: avoid !important;
-        box-shadow: 0 4mm 10mm rgba(15, 23, 42, 0.12) !important;
+        box-shadow: 0 3mm 8mm rgba(122, 0, 0, 0.18) !important;
       }
 
       .tax-box .label {
         color: rgba(255, 255, 255, 0.88) !important;
         font-size: 13px !important;
-        font-weight: 800 !important;
+        font-weight: 850 !important;
       }
 
       .tax-box .label:nth-of-type(1) {
@@ -497,16 +527,16 @@
         gap: 0 4mm !important;
         margin: 0 0 3mm !important;
         padding: 3.5mm 4.5mm !important;
-        border: 1px solid #cbd5e1 !important;
+        border: 1.5px solid #e5e7eb !important;
         border-radius: 5mm !important;
-        background: rgba(248, 250, 252, 0.96) !important;
+        background: rgba(255, 255, 255, 0.94) !important;
         break-inside: avoid !important;
       }
 
       .detail-item {
         min-height: 9.2mm !important;
         padding: 2mm 0 !important;
-        border-bottom: 1px solid #e2e8f0 !important;
+        border-bottom: 1px solid #f3d1d1 !important;
         font-size: 12.8px !important;
         line-height: 1.35 !important;
       }
@@ -516,13 +546,13 @@
       }
 
       .detail-item .key {
-        color: #475569 !important;
-        font-weight: 700 !important;
+        color: #4b5563 !important;
+        font-weight: 800 !important;
       }
 
       .detail-item .val {
-        color: #0f172a !important;
-        font-weight: 900 !important;
+        color: #111827 !important;
+        font-weight: 950 !important;
         text-align: right !important;
       }
 
@@ -534,19 +564,19 @@
       .formula h3.section-title {
         margin: 0 0 2mm !important;
         padding-left: 3mm !important;
-        border-left: 5px solid #0f766e !important;
-        color: #0f172a !important;
+        border-left: 5px solid #d60000 !important;
+        color: #111827 !important;
         font-size: 17px !important;
-        font-weight: 900 !important;
+        font-weight: 950 !important;
       }
 
       .formula-block {
         margin: 0 0 3mm !important;
         padding: 3.3mm 4mm !important;
-        border: 1px solid #99f6e4 !important;
+        border: 1.5px solid #fecaca !important;
         border-radius: 5mm !important;
-        background: #f0fdfa !important;
-        color: #0f172a !important;
+        background: #fff5f5 !important;
+        color: #111827 !important;
         font-size: 11.6px !important;
         line-height: 1.45 !important;
         break-inside: avoid !important;
@@ -561,8 +591,8 @@
       }
 
       .formula-block strong {
-        color: #0f766e !important;
-        font-weight: 900 !important;
+        color: #b40000 !important;
+        font-weight: 950 !important;
       }
 
       .footer-note {
@@ -570,10 +600,10 @@
         margin-top: 2mm !important;
         padding: 2.3mm 3mm !important;
         border-radius: 3mm !important;
-        background: #f8fafc !important;
-        border: 1px solid #e2e8f0 !important;
-        color: #334155 !important;
-        font-size: 10.6px !important;
+        background: #ffffff !important;
+        border: 1px solid #e5e7eb !important;
+        color: #374151 !important;
+        font-size: 10.4px !important;
         line-height: 1.35 !important;
       }
 
@@ -582,21 +612,36 @@
         margin-top: 1.6mm !important;
         padding: 2.3mm 3mm !important;
         background: #fff7ed !important;
-        border: 1px solid #fed7aa !important;
+        border: 1.2px solid #fed7aa !important;
         color: #9a3412 !important;
-        font-size: 9.8px !important;
+        font-size: 9.7px !important;
         line-height: 1.35 !important;
       }
 
       .watermark {
-        z-index: 0 !important;
+        z-index: 9999 !important;
+        pointer-events: none !important;
       }
 
       .watermark span {
         font-size: 62px !important;
-        font-weight: 900 !important;
-        color: rgba(15, 23, 42, 0.035) !important;
+        font-weight: 950 !important;
+        color: rgba(210, 0, 0, 0.075) !important;
         transform: rotate(-24deg) !important;
+      }
+
+      .print-brand-header,
+      .pacific-logo,
+      .print-title-block,
+      .sales-print-info,
+      .tax-box,
+      .mini-box,
+      .detail-list,
+      .formula-block,
+      .footer-note,
+      #printDisclaimer {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
       }
     }
 
@@ -604,7 +649,7 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>太平洋房屋土地增值稅試算</h1>
+    <h1>太平洋房屋站前店土地增值稅試算</h1>
     <p class="subtitle">
       可輸入土地類型、面積、公告現值、前次移轉、前次移轉年月、移轉或設典範圍，並由官方物價指數下拉選單自動帶入稅務專用物價指數
     </p>
@@ -989,11 +1034,15 @@
       const branch = localStorage.getItem('branchName') || '';
       const name = localStorage.getItem('salesName') || '';
       const phone = localStorage.getItem('salesPhone') || '';
+      const branch = localStorage.getItem('branchName') || '';
+      const branchText = branch || '太平洋房屋';
       const branchText = branch || '太平洋房屋';
       const box = document.getElementById('salesPrintInfo');
       const branchEl = document.getElementById('printSalesBranch');
       const titleBranchEl = document.getElementById('printBranchName');
       const watermarkBranchEl = document.getElementById('watermarkBranchName');
+      const branchTitleEl = document.getElementById('printBranchName');
+      const branchInfoEl = document.getElementById('printSalesBranch');
       const nameEl = document.getElementById('printSalesName');
       const phoneEl = document.getElementById('printSalesPhone');
       if (branchEl) branchEl.textContent = branchText;
