@@ -668,7 +668,7 @@
         </div>
       </section>
 
-      <section class="card print-watermark">
+      <section class="card print-watermark" data-branch-watermark="太平洋房屋">
         <div class="print-only-header">
           <h2>房地合一稅試算結果</h2>
           <div class="meta"><span id="printBranchName">太平洋房屋</span>｜巫建穎製作<br>本頁可直接列印成 PDF，或以手機截圖留存。</div>
@@ -1080,26 +1080,21 @@
       $('noteBox').innerHTML = '';
     }
 
-    function getBranchName() {
-      return (localStorage.getItem('branchName') || '').trim() || '太平洋房屋';
-    }
-
     function loadSalesInfo() {
-      const branch = getBranchName();
+      const branch = localStorage.getItem('branchName') || '';
       const name = localStorage.getItem('salesName') || '';
       const phone = localStorage.getItem('salesPhone') || '';
-      const resultCard = document.querySelector('.print-watermark');
-      const branchTitleEl = $('printBranchName');
-      const branchEl = $('printSalesBranch');
+      const branchText = branch || '太平洋房屋';
       const box = $('salesPrintInfo');
+      const branchEl = $('printSalesBranch');
+      const titleBranchEl = $('printBranchName');
       const nameEl = $('printSalesName');
       const phoneEl = $('printSalesPhone');
-
-      if (resultCard) resultCard.setAttribute('data-branch-watermark', branch);
-      if (branchTitleEl) branchTitleEl.textContent = branch;
-      if (branchEl) branchEl.textContent = branch;
+      const watermarkEl = document.querySelector('.print-watermark');
+      if (watermarkEl) watermarkEl.setAttribute('data-branch-watermark', branchText);
+      if (titleBranchEl) titleBranchEl.textContent = branchText;
       if (!box || !nameEl || !phoneEl) return;
-
+      if (branchEl) branchEl.textContent = branchText;
       nameEl.textContent = name || '--';
       phoneEl.textContent = phone || '--';
       box.style.display = (branch || name || phone) ? 'block' : 'none';
@@ -1127,10 +1122,7 @@
     $('calcBtn').addEventListener('click', calculate);
     $('demoBtn').addEventListener('click', fillDemo);
     $('resetBtn').addEventListener('click', resetAll);
-    $('printBtn').addEventListener('click', () => {
-      loadSalesInfo();
-      window.print();
-    });
+    $('printBtn').addEventListener('click', () => window.print());
     loadSalesInfo();
     ['buyDate', 'sellDate', 'residentType', 'selfUse'].forEach(id => {
       $(id).addEventListener('change', determineRateByDates);
