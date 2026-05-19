@@ -77,6 +77,10 @@
       gap: 8px;
     }
 
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
     .field label {
       font-size: 14px;
       font-weight: 700;
@@ -178,6 +182,10 @@
       gap: 8px;
     }
 
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
     .field label {
       font-size: 14px;
       font-weight: 700;
@@ -213,6 +221,10 @@
       </p>
 
       <div class="form-box">
+        <div class="field full">
+          <label for="branchName">分店名稱</label>
+          <input id="branchName" type="text" placeholder="例：太平洋房屋員林站前店" />
+        </div>
         <div class="field">
           <label for="salesName">業務姓名</label>
           <input id="salesName" type="text" placeholder="請輸入姓名" />
@@ -242,13 +254,16 @@
   </div>
   <script>
     function saveSalesInfo() {
+      const branch = document.getElementById('branchName').value.trim();
       const name = document.getElementById('salesName').value.trim();
       const phone = document.getElementById('salesPhone').value.trim();
+      localStorage.setItem('branchName', branch);
       localStorage.setItem('salesName', name);
       localStorage.setItem('salesPhone', phone);
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('branchName').value = localStorage.getItem('branchName') || '';
       document.getElementById('salesName').value = localStorage.getItem('salesName') || '';
       document.getElementById('salesPhone').value = localStorage.getItem('salesPhone') || '';
     });

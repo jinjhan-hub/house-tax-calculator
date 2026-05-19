@@ -501,11 +501,12 @@
 
       <section>
         <div class="card result-print-wrap">
-          <div class="watermark"><span>太平洋房屋員林站前店</span></div>
+          <div class="watermark"><span id="watermarkBranchName">太平洋房屋</span></div>
           <div class="print-surface">
           <div class="print-title">土地增值稅試算結果</div>
-          <div class="print-subtitle">太平洋房屋員林站前店</div>
+          <div class="print-subtitle" id="printBranchName">太平洋房屋</div>
           <div class="sales-print-info" id="salesPrintInfo">
+            <div>分店名稱：<span id="printSalesBranch">--</span></div>
             <div>業務姓名：<span id="printSalesName">--</span></div>
             <div>業務手機：<span id="printSalesPhone">--</span></div>
           </div>
@@ -805,19 +806,33 @@
     });
 
 
+    function getBranchName() {
+      return (localStorage.getItem('branchName') || '').trim() || '太平洋房屋';
+    }
+
     function loadSalesInfo() {
+      const branch = getBranchName();
       const name = localStorage.getItem('salesName') || '';
       const phone = localStorage.getItem('salesPhone') || '';
+      const watermarkEl = document.getElementById('watermarkBranchName');
+      const branchTitleEl = document.getElementById('printBranchName');
+      const branchEl = document.getElementById('printSalesBranch');
       const box = document.getElementById('salesPrintInfo');
       const nameEl = document.getElementById('printSalesName');
       const phoneEl = document.getElementById('printSalesPhone');
+
+      if (watermarkEl) watermarkEl.textContent = branch;
+      if (branchTitleEl) branchTitleEl.textContent = branch;
+      if (branchEl) branchEl.textContent = branch;
       if (!box || !nameEl || !phoneEl) return;
+
       nameEl.textContent = name || '--';
       phoneEl.textContent = phone || '--';
-      box.style.display = (name || phone) ? 'block' : 'none';
+      box.style.display = (branch || name || phone) ? 'block' : 'none';
     }
 
     document.getElementById('printResultBtn').addEventListener('click', () => {
+      loadSalesInfo();
       window.print();
     });
 
